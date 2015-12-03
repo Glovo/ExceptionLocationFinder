@@ -40,7 +40,7 @@
         <!-- Add your actions here -->
         <action id="findUncheckedExceptions" class="com.thomas.checkMate.FindAction" text="Find Unchecked Exceptions"
                 description="this class is used to find Unchecked Exceptions">
-            <keyboard-shortcut keymap="$default" first-keystroke="alt U"/>`
+            <keyboard-shortcut keymap="$default" first-keystroke="alt U"/>
         </action>
     </actions>
 
