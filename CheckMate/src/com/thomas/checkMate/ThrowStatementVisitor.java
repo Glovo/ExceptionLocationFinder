@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class ThrowStatementVisitor extends PsiRecursiveElementVisitor {
-    private Map<PsiThrowStatement, Set<PsiMethod>> throwStatements = new HashMap<>();
+    //    private Map<PsiThrowStatement, Set<PsiMethod>> discoveredExceptions = new HashMap<>();
+    private Map<PsiType, Set<DiscoveredThrowStatement>> discoveredExceptions = new HashMap<>();
     private TryStatementTracker tryStatementTracker;
     private ExceptionTypeAnalyser exceptionTypeAnalyser;
 
@@ -46,22 +47,32 @@ public class ThrowStatementVisitor extends PsiRecursiveElementVisitor {
 
     private void addToMap(PsiThrowStatement psiThrowStatement) {
         PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiThrowStatement, PsiMethod.class);
-        if (throwStatements.containsKey(psiThrowStatement)) {
-            throwStatements.get(psiThrowStatement).add(psiMethod);
+        PsiType psiType = exceptionTypeAnalyser.getExceptionTypeOfThrowStatement(psiThrowStatement);
+        DiscoveredThrowStatement discoveredThrowStatement = new DiscoveredThrowStatement(psiThrowStatement, psiMethod);
+        if (discoveredExceptions.containsKey(psiType)) {
+            discoveredExceptions.get(psiType).add(discoveredThrowStatement);
         } else {
-            Set<PsiMethod> psiMethods = new HashSet<>();
-            psiMethods.add(psiMethod);
-            throwStatements.put(psiThrowStatement, psiMethods);
+            Set<DiscoveredThrowStatement> discoveredThrowStatements = new HashSet<>();
+            discoveredThrowStatements.add(discoveredThrowStatement);
+            discoveredExceptions.put(psiType, discoveredThrowStatements);
         }
     }
 
-    public Map<PsiThrowStatement, Set<PsiMethod>> getThrowStatements() {
-        for (Map.Entry<PsiThrowStatement, Set<PsiMethod>> entry : throwStatements.entrySet()) {
-            System.out.println(entry.getKey().getText());
-            for (PsiMethod psiMethod : entry.getValue()) {
-                System.out.println("\t" + psiMethod);
+    public Map<PsiType, Set<DiscoveredThrowStatement>> getDiscoveredExceptions() {
+        for (Map.Entry<PsiType, Set<DiscoveredThrowStatement>> entry : discoveredExceptions.entrySet()) {
+            System.out.println(entry.getKey().getPresentableText());
+            for (DiscoveredThrowStatement discoveredThrowStatement : entry.getValue()) {
+                PsiMethod psiMethod = discoveredThrowStatement.getEncapsulatingMethod();
+                PsiClass psiClass = psiMethod.getContainingClass();
+                String className;
+                if (psiClass != null) {
+                    className = psiClass.getName();
+                } else {
+                    className = "CLAZZ";
+                }
+                System.out.println(String.format("\t%s:%s", className, psiMethod.getName()));
             }
         }
-        return throwStatements;
+        return discoveredExceptions;
     }
 }
