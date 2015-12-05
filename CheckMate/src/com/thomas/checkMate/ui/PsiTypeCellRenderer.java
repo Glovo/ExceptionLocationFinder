@@ -17,6 +17,4 @@ public class PsiTypeCellRenderer extends DefaultListCellRenderer {
         return super.getListCellRendererComponent(list, value, index,
                 isSelected, hasFocus);
     }
-
-
 }

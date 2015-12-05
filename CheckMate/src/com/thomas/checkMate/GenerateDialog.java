@@ -3,6 +3,7 @@ package com.thomas.checkMate;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
+import com.thomas.checkMate.ui.ExceptionForm;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -17,7 +18,7 @@ public class GenerateDialog extends DialogWrapper {
         setTitle("Uncaught Unchecked Exceptions");
         ThrowStatementVisitor throwStatementVisitor = new ThrowStatementVisitor(psiMethod);
         Map<PsiType, Set<DiscoveredThrowStatement>> discoveredExceptions = throwStatementVisitor.getDiscoveredExceptions();
-        mainComponent = new ExceptionForm(discoveredExceptions).getMailPanel();
+        mainComponent = new ExceptionForm(discoveredExceptions).getSplitter();
         init();
     }
 
