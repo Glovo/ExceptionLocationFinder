@@ -9,15 +9,14 @@ import java.util.Map;
 import java.util.Set;
 
 public class ThrowStatementVisitor extends PsiRecursiveElementVisitor {
-    //    private Map<PsiThrowStatement, Set<PsiMethod>> discoveredExceptions = new HashMap<>();
     private Map<PsiType, Set<DiscoveredThrowStatement>> discoveredExceptions = new HashMap<>();
     private TryStatementTracker tryStatementTracker;
     private ExceptionTypeAnalyser exceptionTypeAnalyser;
 
-    public ThrowStatementVisitor(PsiMethod methodToVisit) {
-        this.exceptionTypeAnalyser = new ExceptionTypeAnalyser(methodToVisit.getManager(), methodToVisit.getResolveScope());
+    public ThrowStatementVisitor(PsiElement elementToVisit) {
+        this.exceptionTypeAnalyser = new ExceptionTypeAnalyser(elementToVisit.getManager(), elementToVisit.getResolveScope());
         this.tryStatementTracker = new TryStatementTracker();
-        methodToVisit.accept(this);
+        elementToVisit.accept(this);
     }
 
     @Override
@@ -59,20 +58,6 @@ public class ThrowStatementVisitor extends PsiRecursiveElementVisitor {
     }
 
     public Map<PsiType, Set<DiscoveredThrowStatement>> getDiscoveredExceptions() {
-        for (Map.Entry<PsiType, Set<DiscoveredThrowStatement>> entry : discoveredExceptions.entrySet()) {
-            System.out.println(entry.getKey().getPresentableText());
-            for (DiscoveredThrowStatement discoveredThrowStatement : entry.getValue()) {
-                PsiMethod psiMethod = discoveredThrowStatement.getEncapsulatingMethod();
-                PsiClass psiClass = psiMethod.getContainingClass();
-                String className;
-                if (psiClass != null) {
-                    className = psiClass.getName();
-                } else {
-                    className = "CLAZZ";
-                }
-                System.out.println(String.format("\t%s:%s", className, psiMethod.getName()));
-            }
-        }
         return discoveredExceptions;
     }
 }

@@ -9,6 +9,7 @@ import com.intellij.ui.ToolbarDecorator;
 import com.thomas.checkMate.DiscoveredThrowStatement;
 
 import javax.swing.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,5 +76,9 @@ public class ExceptionForm {
 
     public JBSplitter getSplitter() {
         return splitter;
+    }
+
+    public List<PsiType> getSelectedExceptionTypes() {
+        return exception_list.getSelectedValuesList();
     }
 }
