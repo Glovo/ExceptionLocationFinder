@@ -1,4 +1,4 @@
-package com.thomas.checkMate;
+package com.thomas.checkMate.discovery;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;

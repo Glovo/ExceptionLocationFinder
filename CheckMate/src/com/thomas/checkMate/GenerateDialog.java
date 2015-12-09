@@ -4,6 +4,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiType;
+import com.thomas.checkMate.discovery.DiscoveredThrowStatement;
+import com.thomas.checkMate.discovery.ThrowStatementVisitor;
 import com.thomas.checkMate.ui.ExceptionForm;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class GenerateDialog extends DialogWrapper {
-    private JComponent mainComponent;
     private ExceptionForm exceptionForm;
 
     public GenerateDialog(Set<PsiMethodCallExpression> psiMethodCallExpressions, Project project) {

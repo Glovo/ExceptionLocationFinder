@@ -6,44 +6,43 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiStatement;
+import com.thomas.checkMate.editing.PsiMethodCallExpressionExtractor;
+import com.thomas.checkMate.editing.PsiMethodExtractor;
+import com.thomas.checkMate.editing.PsiStatementExtractor;
+import com.thomas.checkMate.writing.TryCatchStatementWriter;
 
-import javax.swing.*;
-import java.beans.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 
 public class FindAction extends AnAction {
-    private JComponent jComponent;
-    private List<Statement> selectedStatements = new ArrayList<>();
+    private PsiMethod psiMethod;
 
     public void actionPerformed(AnActionEvent e) {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        Project project = e.getProject();
         if (psiFile == null || editor == null) {
             e.getPresentation().setEnabled(false);
             return;
         }
         Caret currentCaret = editor.getCaretModel().getCurrentCaret();
-        Set<PsiMethodCallExpression> psiMethodCalls = getPsiMethodCallExpressionFromContext(currentCaret.getSelectionStart(), currentCaret.getSelectionEnd(), psiFile);
-        GenerateDialog generateDialog = new GenerateDialog(psiMethodCalls, e.getProject());
+        PsiStatementExtractor statementExtractor = new PsiStatementExtractor(psiFile, currentCaret.getSelectionStart(), currentCaret.getSelectionEnd());
+        PsiMethodCallExpressionExtractor methodCallExpressionExtractor = new PsiMethodCallExpressionExtractor(statementExtractor);
+        Set<PsiMethodCallExpression> psiMethodCalls = methodCallExpressionExtractor.extract();
+        GenerateDialog generateDialog = new GenerateDialog(psiMethodCalls, project);
         generateDialog.show();
+        List<PsiStatement> statements = statementExtractor.extract();
+        statements.stream().forEach(s -> System.out.println(s.getText()));
         if (generateDialog.isOK()) {
-//            TryCatchStatementWriter tryCatchStatementWriter = new TryCatchStatementWriter(editor.getDocument(), e.getProject(), )
+            TryCatchStatementWriter tryCatchStatementWriter = new TryCatchStatementWriter(editor.getDocument(), project,
+                    statements, generateDialog.getSelectedExceptionTypes(), PsiMethodExtractor.extract(psiFile, currentCaret.getSelectionStart()));
+            tryCatchStatementWriter.write();
         }
-    }
-
-    private Set<PsiMethodCallExpression> getPsiMethodCallExpressionFromContext(int startOffset, int endOffset, PsiFile psiFile) {
-        Set<PsiMethodCallExpression> selectedStatements = new PsiMethodCallExpressionExtractor(psiFile, startOffset, endOffset).extract();
-        selectedStatements.stream().forEach(s -> System.out.println(s.getText()));
-        return selectedStatements;
-    }
-
-    private Set<PsiStatement> getPsiStatementsFromContext(int startOffset, int endOffset, PsiFile psiFile) {
-        return null;
     }
 }

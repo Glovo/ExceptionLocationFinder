@@ -6,7 +6,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.ToolbarDecorator;
-import com.thomas.checkMate.DiscoveredThrowStatement;
+import com.thomas.checkMate.discovery.DiscoveredThrowStatement;
 
 import javax.swing.*;
 import java.util.List;
@@ -15,7 +15,6 @@ import java.util.Set;
 
 public class ExceptionForm {
     private JList<PsiType> exception_list;
-    private JPanel main_panel;
     private JList<PsiMethod> method_list;
     private Map<PsiType, Set<DiscoveredThrowStatement>> exceptionMap;
     private LabeledComponent decoratedExceptionList;
@@ -64,14 +63,6 @@ public class ExceptionForm {
             }
             method_list.setModel(methodListModel);
         }
-    }
-
-    public JPanel getMailPanel() {
-        return main_panel;
-    }
-
-    public LabeledComponent getDecoratedExceptionList() {
-        return decoratedExceptionList;
     }
 
     public JBSplitter getSplitter() {
