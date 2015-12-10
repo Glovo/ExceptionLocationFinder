@@ -1,15 +1,21 @@
 package com.thomas.checkMate.presentation.exception_form;
 
+import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiThrowStatement;
 import com.intellij.psi.PsiType;
 import com.intellij.ui.JBSplitter;
 import com.thomas.checkMate.discovery.DiscoveredThrowStatement;
+import com.thomas.checkMate.utilities.DiscoveredExceptionsUtil;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class ExceptionForm {
@@ -24,6 +30,7 @@ public class ExceptionForm {
         method_list = createMethodList();
         LabeledComponent decoratedExceptionList = new DefaultListDecorator<PsiType>().decorate(exception_list, "Select exceptions to include");
         LabeledComponent decoratedMethodList = new DefaultListDecorator<PsiMethod>().decorate(method_list, "Inspect methods that throw this exception");
+        exception_list.setSelectedIndex(0);
         splitter = createSplitter(decoratedExceptionList, decoratedMethodList);
     }
 
@@ -61,6 +68,17 @@ public class ExceptionForm {
                 methodListModel.addElement(discoveredThrowStatement.getEncapsulatingMethod());
             }
             method_list.setModel(methodListModel);
+            method_list.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    int i = method_list.locationToIndex(e.getPoint());
+                    if (i >= 0) {
+                        PsiMethod selectedMethod = method_list.getSelectedValue();
+                        Optional<PsiThrowStatement> throwStatementOf = DiscoveredExceptionsUtil.findThrowStatementOf(selectedMethod, exceptionMap);
+                        NavigationUtil.activateFileWithPsiElement(throwStatementOf.get());
+                    }
+                }
+            });
         }
     }
 
