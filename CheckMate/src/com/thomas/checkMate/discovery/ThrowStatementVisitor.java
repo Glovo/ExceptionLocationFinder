@@ -2,6 +2,7 @@ package com.thomas.checkMate.discovery;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.thomas.checkMate.utilities.ExceptionTypeAnalyser;
 
 import java.util.HashMap;
 import java.util.HashSet;

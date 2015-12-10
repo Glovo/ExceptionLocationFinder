@@ -1,4 +1,4 @@
-package com.thomas.checkMate.discovery;
+package com.thomas.checkMate.utilities;
 
 import com.intellij.psi.PsiCatchSection;
 import com.intellij.psi.PsiDisjunctionType;

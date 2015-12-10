@@ -4,7 +4,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.thomas.checkMate.discovery.CatchSectionUtil;
+import com.thomas.checkMate.utilities.CatchSectionUtil;
 
 import java.util.Arrays;
 import java.util.List;

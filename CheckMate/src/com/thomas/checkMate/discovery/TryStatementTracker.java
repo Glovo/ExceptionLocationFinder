@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiTryStatement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.thomas.checkMate.utilities.CatchSectionUtil;
 
 import java.util.*;
 
