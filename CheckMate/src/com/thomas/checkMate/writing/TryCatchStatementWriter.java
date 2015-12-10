@@ -3,6 +3,7 @@ package com.thomas.checkMate.writing;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.thomas.checkMate.utilities.CatchSectionUtil;
 
@@ -63,7 +64,10 @@ public class TryCatchStatementWriter {
         }
 
         private void addCatchSectionByTypeHierarchy(List<PsiCatchSection> psiCatchSections, PsiTryStatement psiTryStatement) {
-            CatchSectionSorter.sort(psiCatchSections).forEach(psiTryStatement::add);
+            CatchSectionSorter.sort(psiCatchSections).forEach(pc -> {
+                PsiElement added = psiTryStatement.add(pc);
+                JavaCodeStyleManager.getInstance(project).shortenClassReferences(added);
+            });
         }
     }
 }
