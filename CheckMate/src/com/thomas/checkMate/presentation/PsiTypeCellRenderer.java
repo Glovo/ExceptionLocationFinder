@@ -1,4 +1,4 @@
-package com.thomas.checkMate.ui;
+package com.thomas.checkMate.presentation;
 
 import com.intellij.psi.PsiType;
 

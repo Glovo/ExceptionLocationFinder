@@ -15,7 +15,7 @@ public class ThrowStatementVisitor extends PsiRecursiveElementVisitor {
 
     public ThrowStatementVisitor(PsiElement elementToVisit) {
         this.exceptionTypeAnalyser = new ExceptionTypeAnalyser(elementToVisit.getManager(), elementToVisit.getResolveScope());
-        this.tryStatementTracker = new TryStatementTracker();
+        this.tryStatementTracker = new TryStatementTracker(elementToVisit);
         elementToVisit.accept(this);
     }
 

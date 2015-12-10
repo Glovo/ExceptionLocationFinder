@@ -6,7 +6,7 @@ import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiType;
 import com.thomas.checkMate.discovery.DiscoveredThrowStatement;
 import com.thomas.checkMate.discovery.ThrowStatementVisitor;
-import com.thomas.checkMate.ui.ExceptionForm;
+import com.thomas.checkMate.presentation.ExceptionForm;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

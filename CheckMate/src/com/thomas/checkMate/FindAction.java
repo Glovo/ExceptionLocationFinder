@@ -8,11 +8,9 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiStatement;
 import com.thomas.checkMate.editing.PsiMethodCallExpressionExtractor;
-import com.thomas.checkMate.editing.PsiMethodExtractor;
 import com.thomas.checkMate.editing.PsiStatementExtractor;
 import com.thomas.checkMate.writing.TryCatchStatementWriter;
 
@@ -21,8 +19,6 @@ import java.util.Set;
 
 
 public class FindAction extends AnAction {
-    private PsiMethod psiMethod;
-
     public void actionPerformed(AnActionEvent e) {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
@@ -38,11 +34,10 @@ public class FindAction extends AnAction {
         GenerateDialog generateDialog = new GenerateDialog(psiMethodCalls, project);
         generateDialog.show();
         List<PsiStatement> statements = statementExtractor.extract();
-        statements.stream().forEach(s -> System.out.println(s.getText()));
         if (generateDialog.isOK()) {
-            TryCatchStatementWriter tryCatchStatementWriter = new TryCatchStatementWriter(editor.getDocument(), project,
-                    statements, generateDialog.getSelectedExceptionTypes(), PsiMethodExtractor.extract(psiFile, currentCaret.getSelectionStart()));
+            TryCatchStatementWriter tryCatchStatementWriter = new TryCatchStatementWriter(project, statements, generateDialog.getSelectedExceptionTypes());
             tryCatchStatementWriter.write();
         }
     }
+    //TODO: check if compare works
 }
