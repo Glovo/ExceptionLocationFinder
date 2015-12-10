@@ -1,17 +1,17 @@
 <idea-plugin version="2">
     <id>com.thomas.checkMate</id>
-    <name>Unchecked Exception Discovery</name>
+    <name>CheckMate</name>
     <version>1.0</version>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="goristhomas@hotmail.com">Thomas Goris</vendor>
 
     <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Discover uncaught unchecked exceptions for one or more selected statements.<br>
+      Generate or update a try catch statement based on the exceptions you selected.<br>
+      Inspect responsible methods and corresponding throw statements.
     ]]></description>
 
     <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      Initial release.
     ]]>
     </change-notes>
 
@@ -23,6 +23,7 @@
     <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
     -->
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
@@ -39,9 +40,8 @@
     <actions>
         <!-- Add your actions here -->
         <action id="findUncheckedExceptions" class="com.thomas.checkMate.FindAction" text="Find Unchecked Exceptions"
-                description="this class is used to find Unchecked Exceptions">
+                description="Used to discover uncaught unchecked exceptions and add/update a try catch statement based on the selected exceptions">
             <keyboard-shortcut keymap="$default" first-keystroke="alt U"/>
         </action>
     </actions>
-
 </idea-plugin>

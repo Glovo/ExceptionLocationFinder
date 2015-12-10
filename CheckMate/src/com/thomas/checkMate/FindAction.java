@@ -33,23 +33,47 @@ public class FindAction extends AnAction {
         if (psiFile == null || editor == null) {
             return;
         }
+        //Extract all selected method call expressions
         Caret currentCaret = editor.getCaretModel().getCurrentCaret();
         PsiStatementExtractor statementExtractor = new PsiStatementExtractor(psiFile, currentCaret.getSelectionStart(), currentCaret.getSelectionEnd());
         PsiMethodCallExpressionExtractor methodCallExpressionExtractor = new PsiMethodCallExpressionExtractor(statementExtractor);
         Set<PsiMethodCallExpression> psiMethodCalls = methodCallExpressionExtractor.extract();
-        Map<PsiType, Set<DiscoveredThrowStatement>> discoveredExceptions = ExceptionFinder.find(psiMethodCalls);
-        if (discoveredExceptions.keySet().size() < 1) {
-            HintManager.getInstance().showInformationHint(editor, "No unchecked exceptions found in the selected statements.");
+        if (psiMethodCalls.size() < 1) {
+            showInformationHint(editor, "No expressions found in current selection");
             return;
         }
+        //Find all uncaught unchecked exceptions in extracted method call expressions
+        Map<PsiType, Set<DiscoveredThrowStatement>> discoveredExceptions = ExceptionFinder.find(psiMethodCalls);
+        if (discoveredExceptions.keySet().size() < 1) {
+            showInformationHint(editor, "No uncaught unchecked exceptions found in the selected statements");
+            return;
+        }
+        //Generate dialog with all discovered uncaught unchecked exceptions
         GenerateDialog generateDialog = new GenerateDialog(discoveredExceptions, project);
         generateDialog.show();
-        List<PsiStatement> statements = statementExtractor.extract();
         if (generateDialog.isOK()) {
-            NavigationUtil.activateFileWithPsiElement(statements.get(0));
-            TryCatchStatementWriter tryCatchStatementWriter = new TryCatchStatementWriter(project, statements, generateDialog.getSelectedExceptionTypes());
-            tryCatchStatementWriter.write();
+            //If ok is pressed, start writing the try catch statement for the selected exceptions
+            generateTryCatch(statementExtractor, generateDialog, project, editor);
         }
     }
-    //TODO: check if compare works
+
+    private void generateTryCatch(PsiStatementExtractor statementExtractor, GenerateDialog generateDialog, Project project, Editor editor) {
+        //Extract the statements that need to be wrapped by the try catch statement
+        List<PsiStatement> statements = statementExtractor.extract();
+        //Activate the file that needs to be edited
+        NavigationUtil.activateFileWithPsiElement(statements.get(0));
+        //Get the selected exceptions
+        List<PsiType> selectedExceptionTypes = generateDialog.getSelectedExceptionTypes();
+        if (selectedExceptionTypes.size() < 1) {
+            showInformationHint(editor, "No exceptions selected");
+            return;
+        }
+        //Write a try catch statement for the selected exceptions around the extracted statements
+        new TryCatchStatementWriter(project, statements, selectedExceptionTypes).write();
+    }
+
+
+    private void showInformationHint(Editor editor, String hint) {
+        HintManager.getInstance().showInformationHint(editor, hint);
+    }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CatchSectionWriter {
     private final PsiElementFactory elementFactory;
-    
+
     public CatchSectionWriter(PsiElementFactory elementFactory) {
         this.elementFactory = elementFactory;
     }
