@@ -12,6 +12,7 @@ import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiStatement;
 import com.thomas.checkMate.editing.PsiMethodCallExpressionExtractor;
 import com.thomas.checkMate.editing.PsiStatementExtractor;
+import com.thomas.checkMate.presentation.dialog.GenerateDialog;
 import com.thomas.checkMate.writing.TryCatchStatementWriter;
 
 import java.util.List;

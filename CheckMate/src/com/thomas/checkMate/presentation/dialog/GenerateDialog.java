@@ -1,4 +1,4 @@
-package com.thomas.checkMate;
+package com.thomas.checkMate.presentation.dialog;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -6,7 +6,7 @@ import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiType;
 import com.thomas.checkMate.discovery.DiscoveredThrowStatement;
 import com.thomas.checkMate.discovery.ThrowStatementVisitor;
-import com.thomas.checkMate.presentation.ExceptionForm;
+import com.thomas.checkMate.presentation.exception_form.ExceptionForm;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

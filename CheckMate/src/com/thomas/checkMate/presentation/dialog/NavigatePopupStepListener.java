@@ -1,4 +1,4 @@
-package com.thomas.checkMate;
+package com.thomas.checkMate.presentation.dialog;
 
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.psi.PsiThrowStatement;

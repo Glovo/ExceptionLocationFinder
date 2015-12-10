@@ -1,4 +1,4 @@
-package com.thomas.checkMate;
+package com.thomas.checkMate.presentation.dialog;
 
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
