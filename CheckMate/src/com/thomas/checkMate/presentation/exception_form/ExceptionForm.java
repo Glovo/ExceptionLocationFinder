@@ -3,11 +3,11 @@ package com.thomas.checkMate.presentation.exception_form;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiThrowStatement;
 import com.intellij.psi.PsiType;
 import com.intellij.ui.JBSplitter;
-import com.thomas.checkMate.discovery.DiscoveredThrowStatement;
+import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
 import com.thomas.checkMate.utilities.DiscoveredExceptionsUtil;
 
 import javax.swing.*;
@@ -21,10 +21,10 @@ import java.util.Set;
 public class ExceptionForm {
     private JList<PsiType> exception_list;
     private JList<PsiMethod> method_list;
-    private Map<PsiType, Set<DiscoveredThrowStatement>> exceptionMap;
+    private Map<PsiType, Set<DiscoveredExceptionIndicator>> exceptionMap;
     private JBSplitter splitter;
 
-    public ExceptionForm(Map<PsiType, Set<DiscoveredThrowStatement>> discoveredExceptionMap) {
+    public ExceptionForm(Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptionMap) {
         this.exceptionMap = discoveredExceptionMap;
         exception_list = createExceptionList(discoveredExceptionMap.keySet());
         method_list = createMethodList();
@@ -64,7 +64,7 @@ public class ExceptionForm {
         if (index >= 0) {
             PsiType psiType = exception_list.getModel().getElementAt(index);
             DefaultListModel<PsiMethod> methodListModel = new DefaultListModel<>();
-            for (DiscoveredThrowStatement discoveredThrowStatement : exceptionMap.get(psiType)) {
+            for (DiscoveredExceptionIndicator discoveredThrowStatement : exceptionMap.get(psiType)) {
                 methodListModel.addElement(discoveredThrowStatement.getEncapsulatingMethod());
             }
             method_list.setModel(methodListModel);
@@ -74,7 +74,7 @@ public class ExceptionForm {
                     int i = method_list.locationToIndex(e.getPoint());
                     if (i >= 0) {
                         PsiMethod selectedMethod = method_list.getSelectedValue();
-                        Optional<PsiThrowStatement> throwStatementOf = DiscoveredExceptionsUtil.findThrowStatementOf(selectedMethod, exceptionMap);
+                        Optional<PsiElement> throwStatementOf = DiscoveredExceptionsUtil.findIndicatorOf(selectedMethod, exceptionMap);
                         NavigationUtil.activateFileWithPsiElement(throwStatementOf.get());
                     }
                 }
