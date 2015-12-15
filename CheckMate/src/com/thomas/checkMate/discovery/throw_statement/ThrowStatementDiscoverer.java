@@ -2,7 +2,7 @@ package com.thomas.checkMate.discovery.throw_statement;
 
 import com.intellij.psi.PsiThrowStatement;
 import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
-import com.thomas.checkMate.discovery.general.ExceptionTypeResolver;
+import com.thomas.checkMate.discovery.general.type_resolving.ExceptionTypeResolver;
 
 public class ThrowStatementDiscoverer extends ExceptionIndicatorDiscoverer<PsiThrowStatement> {
     public ThrowStatementDiscoverer(ExceptionTypeResolver<PsiThrowStatement> exceptionTypeResolver) {

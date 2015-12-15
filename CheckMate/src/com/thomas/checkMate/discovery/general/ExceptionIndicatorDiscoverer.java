@@ -4,6 +4,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.thomas.checkMate.discovery.general.type_resolving.ExceptionTypeResolver;
+import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 
 import java.util.HashSet;
 import java.util.Map;

@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.thomas.checkMate.discovery.ExceptionFinder;
 import com.thomas.checkMate.discovery.doc_throw_tag.DocTagDiscoverer;
-import com.thomas.checkMate.discovery.doc_throw_tag.DocTagTypeResolver;
+import com.thomas.checkMate.discovery.doc_throw_tag.type_resolving.DocTagTypeResolver;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
 import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
 import com.thomas.checkMate.discovery.throw_statement.ThrowStatementDiscoverer;
@@ -77,7 +77,7 @@ public class FindAction extends AnAction {
 
     private DocTagDiscoverer getDocTagDiscoverer(Project project) {
         PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
-        DocTagTypeResolver typeResolver = new DocTagTypeResolver(elementFactory);
+        DocTagTypeResolver typeResolver = new DocTagTypeResolver(elementFactory, project);
         return new DocTagDiscoverer(typeResolver);
     }
 
