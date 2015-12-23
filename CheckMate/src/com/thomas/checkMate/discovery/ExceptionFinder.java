@@ -1,21 +1,26 @@
 package com.thomas.checkMate.discovery;
 
+import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiType;
-import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
-import com.thomas.checkMate.discovery.general.ThrowStatementVisitor;
+import com.thomas.checkMate.discovery.general.ExceptionDiscoveringVisitor;
+import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ExceptionFinder {
 
-    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> find(Collection<PsiMethodCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList) {
+    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> find(Set<PsiMethodCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList) {
         Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = new HashMap<>();
-        ThrowStatementVisitor throwStatementVisitor;
-        for (PsiMethodCallExpression expression : expressions) {
-            throwStatementVisitor = new ThrowStatementVisitor(expression, discovererList);
-            mergeResult(discoveredExceptions, throwStatementVisitor.getDiscoveredExceptions());
+        ExceptionDiscoveringVisitor exceptionDiscoveringVisitor;
+        for (PsiExpression expression : expressions) {
+            exceptionDiscoveringVisitor = new ExceptionDiscoveringVisitor(expression, discovererList);
+            expression.accept(exceptionDiscoveringVisitor);
+            mergeResult(discoveredExceptions, exceptionDiscoveringVisitor.getDiscoveredExceptions());
         }
         return discoveredExceptions;
     }

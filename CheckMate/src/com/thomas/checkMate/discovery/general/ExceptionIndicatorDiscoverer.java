@@ -23,12 +23,14 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
     }
 
     public Map<PsiType, Set<DiscoveredExceptionIndicator>> addDiscoveries(T psiElement, Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions) {
-        if (isIndicator(psiElement)) {
-            PsiType psiType = exceptionTypeResolver.resolve(psiElement);
-            if (psiType != null && isUnChecked(psiType) && isUncaught(psiType)) {
-                PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
-                DiscoveredExceptionIndicator discoveredExceptionIndicator = new DiscoveredExceptionIndicator(psiElement, psiMethod);
-                this.addToMap(psiType, discoveredExceptionIndicator, discoveredExceptions);
+        if (getElementClass().isAssignableFrom(psiElement.getClass())) {
+            if (isIndicator(psiElement)) {
+                PsiType psiType = exceptionTypeResolver.resolve(psiElement);
+                if (psiType != null && isUnChecked(psiType) && isUncaught(psiType)) {
+                    PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
+                    DiscoveredExceptionIndicator discoveredExceptionIndicator = new DiscoveredExceptionIndicator(psiElement, psiMethod);
+                    this.addToMap(psiType, discoveredExceptionIndicator, discoveredExceptions);
+                }
             }
         }
         return discoveredExceptions;
