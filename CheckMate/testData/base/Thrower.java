@@ -24,6 +24,10 @@ public class Thrower extends SuperThrower implements SuperInterface {
         throw new CustomCheckedException("CustomChecked");
     }
 
+    public void construct() {
+        new Thrower();
+    }
+
     public void throwAssertion() {
         throw new AssertionError("Assertion");
     }
@@ -34,6 +38,28 @@ public class Thrower extends SuperThrower implements SuperInterface {
         } catch (RuntimeException e) {
             //Caught Runtime
         }
+    }
+
+    public void superTryCatch() {
+        try {
+            throwCustomUnChecked();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void uncaughtTryCatch() {
+        try {
+            throwCustomUnChecked();
+            throwOther();
+        } catch (CustomUncheckedException e0) {
+            e0.printStackTrace();
+        }
+    }
+
+    public void throwBoth() {
+        throwCustomUnChecked();
+        throwOther();
     }
 
     public Thrower chainOne() {

@@ -19,4 +19,17 @@ public class DiscoveredExceptionIndicator {
     public PsiElement getIndicator() {
         return indicator;
     }
+
+    @Override
+    public int hashCode() {
+        return indicator.hashCode() + encapsulatingMethod.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DiscoveredExceptionIndicator)) return false;
+        DiscoveredExceptionIndicator that = (DiscoveredExceptionIndicator) o;
+        return getIndicator().equals(that.getIndicator()) && getEncapsulatingMethod().equals(that.getEncapsulatingMethod());
+    }
 }

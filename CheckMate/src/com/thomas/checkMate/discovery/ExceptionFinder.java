@@ -1,7 +1,7 @@
 package com.thomas.checkMate.discovery;
 
+import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiType;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
 import com.thomas.checkMate.discovery.general.ExceptionDiscoveringVisitor;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class ExceptionFinder {
 
-    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> find(Set<PsiMethodCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList) {
+    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> find(Set<PsiCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList) {
         Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = new HashMap<>();
         ExceptionDiscoveringVisitor exceptionDiscoveringVisitor;
         for (PsiExpression expression : expressions) {

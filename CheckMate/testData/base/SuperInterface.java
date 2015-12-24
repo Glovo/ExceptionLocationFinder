@@ -8,4 +8,8 @@ public interface SuperInterface {
      *                                  asdfjaslkdf
      */
     public void throwSuperInterface();
+
+    default void throwDefaultInterface() {
+        throw new CustomUncheckedException("Default interface unchecked");
+    }
 }

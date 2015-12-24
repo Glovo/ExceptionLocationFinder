@@ -11,18 +11,14 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.thomas.checkMate.discovery.ExceptionFinder;
-import com.thomas.checkMate.discovery.doc_throw_tag.DocTagDiscoverer;
-import com.thomas.checkMate.discovery.doc_throw_tag.type_resolving.DocTagTypeResolver;
+import com.thomas.checkMate.discovery.factories.DiscovererFactory;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
 import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
-import com.thomas.checkMate.discovery.throw_statement.ThrowStatementDiscoverer;
-import com.thomas.checkMate.discovery.throw_statement.ThrowStatementTypeResolver;
 import com.thomas.checkMate.editing.PsiMethodCallExpressionExtractor;
 import com.thomas.checkMate.editing.PsiStatementExtractor;
 import com.thomas.checkMate.presentation.dialog.GenerateDialog;
 import com.thomas.checkMate.writing.TryCatchStatementWriter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +37,7 @@ public class FindAction extends AnAction {
         Caret currentCaret = editor.getCaretModel().getCurrentCaret();
         PsiStatementExtractor statementExtractor = new PsiStatementExtractor(psiFile, currentCaret.getSelectionStart(), currentCaret.getSelectionEnd());
         PsiMethodCallExpressionExtractor methodCallExpressionExtractor = new PsiMethodCallExpressionExtractor(statementExtractor);
-        Set<PsiMethodCallExpression> psiMethodCalls = methodCallExpressionExtractor.extract();
+        Set<PsiCallExpression> psiMethodCalls = methodCallExpressionExtractor.extract();
         if (psiMethodCalls.size() < 1) {
             showInformationHint(editor, "No expressions found in current selection");
             return;
@@ -49,9 +45,7 @@ public class FindAction extends AnAction {
 
         //Get all discoverers
         //TODO: Select discoverers with settings
-        List<ExceptionIndicatorDiscoverer> discovererList = new ArrayList<>();
-        discovererList.add(getThrowStatementDiscoverer());
-        discovererList.add(getDocTagDiscoverer(project));
+        List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createAllDiscoverers(project);
 
         //Find all uncaught unchecked exceptions in extracted method call expressions with the discoverers
         Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ExceptionFinder.find(psiMethodCalls, discovererList);
@@ -68,17 +62,6 @@ public class FindAction extends AnAction {
             //If ok is pressed, start writing the try catch statement for the selected exceptions
             generateTryCatch(statementExtractor, generateDialog, project, editor);
         }
-    }
-
-    private ThrowStatementDiscoverer getThrowStatementDiscoverer() {
-        ThrowStatementTypeResolver throwStatementTypeResolver = new ThrowStatementTypeResolver();
-        return new ThrowStatementDiscoverer(throwStatementTypeResolver);
-    }
-
-    private DocTagDiscoverer getDocTagDiscoverer(Project project) {
-        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
-        DocTagTypeResolver typeResolver = new DocTagTypeResolver(elementFactory, project);
-        return new DocTagDiscoverer(typeResolver);
     }
 
     private void generateTryCatch(PsiStatementExtractor statementExtractor, GenerateDialog generateDialog, Project project, Editor editor) {
