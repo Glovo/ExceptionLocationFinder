@@ -1,14 +1,10 @@
-package com.thomas.checkMate;
+package com.thomas.checkMate.discovery;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiType;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.thomas.checkMate.discovery.ExceptionFinder;
-import com.thomas.checkMate.discovery.factories.DiscovererFactory;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
-import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
-import com.thomas.checkMate.editing.PsiMethodCallExpressionExtractor;
-import com.thomas.checkMate.editing.TestExtractorFactory;
+import com.thomas.checkMate.util.TestExceptionFinder;
 
 import java.io.File;
 import java.util.Arrays;
@@ -21,6 +17,7 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     private static final String CUSTOM_UNCHECKED = "base.CustomUncheckedException";
     private static final String OTHER_UNCHECKED = "base.other_package.OtherCustomUncheckedException";
     private static final String RUNTIME = "RuntimeException";
+    private static final String TEST_FILE_DIR = "exception_finder/";
 
 
     @Override
@@ -52,6 +49,11 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
 
     public void testInterfaceDefaultFound() {
         configure("InterfaceDefaultFound.java");
+        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+    }
+
+    public void testInterFaceSuperFound() {
+        configure("InterfaceSuperFound.java");
         assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
     }
 
@@ -106,9 +108,7 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     }
 
     private Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions() {
-        PsiMethodCallExpressionExtractor expressionExtractor = TestExtractorFactory.createExpressionExtractor(myFixture);
-        List<ExceptionIndicatorDiscoverer> allDiscoverers = DiscovererFactory.createAllDiscoverers(this.myFixture.getProject());
-        return ExceptionFinder.find(expressionExtractor.extract(), allDiscoverers);
+        return TestExceptionFinder.findExceptions(myFixture);
     }
 
     private void assertCorrectExceptionsFound(Set<PsiType> types, String... criteria) {
@@ -133,7 +133,7 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     }
 
     private void configure(String... testFiles) {
-        ExceptionFinderTestUtil.configure(myFixture, testFiles);
+        ExceptionFinderTestUtil.configure(myFixture, TEST_FILE_DIR, testFiles);
     }
 
 }

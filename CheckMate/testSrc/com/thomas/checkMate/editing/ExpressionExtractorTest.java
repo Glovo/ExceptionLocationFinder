@@ -4,7 +4,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.thomas.checkMate.ExceptionFinderTest;
+import com.thomas.checkMate.discovery.ExceptionFinderTest;
 
 import java.io.File;
 import java.util.Arrays;

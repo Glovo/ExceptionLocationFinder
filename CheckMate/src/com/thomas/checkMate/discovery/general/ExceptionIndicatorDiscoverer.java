@@ -10,12 +10,14 @@ import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
     private ExceptionTypeResolver<T> exceptionTypeResolver;
     private TryStatementTracker tryStatementTracker;
     private UncheckedValidator uncheckedValidator;
     private Class<T> elementClass;
+    private static final Logger logger = Logger.getLogger(ExceptionIndicatorDiscoverer.class.getName());
 
     public ExceptionIndicatorDiscoverer(ExceptionTypeResolver<T> exceptionTypeResolver, Class<T> clazz) {
         this.exceptionTypeResolver = exceptionTypeResolver;
@@ -29,6 +31,7 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
                 if (psiType != null && isUnChecked(psiType) && isUncaught(psiType)) {
                     PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
                     DiscoveredExceptionIndicator discoveredExceptionIndicator = new DiscoveredExceptionIndicator(psiElement, psiMethod);
+                    logger.info(String.format("%s found in %s(%s)", psiType.getCanonicalText(), psiMethod, getElementClass()));
                     this.addToMap(psiType, discoveredExceptionIndicator, discoveredExceptions);
                 }
             }

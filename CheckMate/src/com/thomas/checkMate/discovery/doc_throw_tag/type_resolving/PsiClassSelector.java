@@ -5,7 +5,7 @@ import com.intellij.psi.util.ClassUtil;
 
 public class PsiClassSelector {
     public static PsiClass selectClassByPackage(String packageName, PsiClass[] eligibleClasses) {
-        PsiClass closestMatch = null;
+        PsiClass closestMatch = eligibleClasses[0];
         int highestNrOfMatchingParts = Integer.MIN_VALUE;
         for (PsiClass psiClass : eligibleClasses) {
             String packagePart = ClassUtil.extractPackageName(psiClass.getQualifiedName());
