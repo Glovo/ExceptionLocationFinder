@@ -9,7 +9,10 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiCallExpression;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiStatement;
+import com.intellij.psi.PsiType;
 import com.thomas.checkMate.discovery.ExceptionFinder;
 import com.thomas.checkMate.discovery.factories.DiscovererFactory;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
@@ -58,9 +61,11 @@ public class FindAction extends AnAction {
         GenerateDialog generateDialog = new GenerateDialog(discoveredExceptions, project);
         generateDialog.show();
         if (generateDialog.isOK()) {
-
             //If ok is pressed, start writing the try catch statement for the selected exceptions
             generateTryCatch(statementExtractor, generateDialog, project, editor);
+        } else {
+            //The action was cancelled
+            psiFile.navigate(true);
         }
     }
 

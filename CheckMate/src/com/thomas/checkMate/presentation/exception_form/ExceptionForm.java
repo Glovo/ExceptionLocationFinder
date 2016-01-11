@@ -64,9 +64,9 @@ public class ExceptionForm {
             method_list.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    int i = method_list.locationToIndex(e.getPoint());
-                    if (i >= 0) {
-                        NavigationUtil.activateFileWithPsiElement(method_list.getSelectedValue().getIndicator());
+                    DiscoveredExceptionIndicator indicator = method_list.getSelectedValue();
+                    if (indicator != null) {
+                        NavigationUtil.activateFileWithPsiElement(indicator.getIndicator());
                     }
                 }
             });

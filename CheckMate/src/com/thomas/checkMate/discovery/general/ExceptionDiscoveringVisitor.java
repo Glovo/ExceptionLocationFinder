@@ -2,6 +2,7 @@ package com.thomas.checkMate.discovery.general;
 
 import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsMethodImpl;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.psi.MethodInheritanceUtils;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 
@@ -46,32 +47,30 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
         super.visitCallExpression(callExpression);
     }
 
-//    public void visitSourceOf(PsiMethod psiMethod) {
-//        PsiMethod sourceMethod = null;
-//        if (psiMethod instanceof ClsMethodImpl) {
-//            sourceMethod = ((ClsMethodImpl) psiMethod).getSourceMirrorMethod();
-//        }
-//        if (sourceMethod != null && !alreadyVisited(sourceMethod)) {
-//            super.visitMethod(sourceMethod);
-//        } else {
-//            super.visitMethod(psiMethod);
-//        }
-//    }
 
     public void visitMethod(PsiMethod method) {
         visitSource(method);
         Set<PsiMethod> siblings = MethodInheritanceUtils.calculateSiblingMethods(method);
-        siblings.forEach(this::visitSource);
+        List<PsiClass> implementingClasses = Arrays.asList(MethodInheritanceUtils.findAvailableSubClassesForMethod(method));
+        siblings.forEach(s -> {
+            if (implementingClasses.contains(PsiTreeUtil.getParentOfType(s, PsiClass.class))) {
+                visitSource(s);
+            }
+        });
     }
 
     public void visitSource(PsiMethod method) {
+        boolean sourceFound = false;
         if (method instanceof ClsMethodImpl) {
             PsiMethod sourceMirrorMethod = ((ClsMethodImpl) method).getSourceMirrorMethod();
             if (sourceMirrorMethod != null) {
+                sourceFound = true;
                 uniqueVisit(sourceMirrorMethod);
             }
         }
-        uniqueVisit(method);
+        if (!sourceFound) {
+            uniqueVisit(method);
+        }
     }
 
     public void uniqueVisit(PsiMethod method) {

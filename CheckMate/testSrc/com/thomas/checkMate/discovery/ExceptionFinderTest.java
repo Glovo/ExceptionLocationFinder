@@ -52,9 +52,9 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
     }
 
-    public void testInterFaceSuperFound() {
-        configure("InterfaceSuperFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+    public void testInterFaceSuperIgnored() {
+        configure("InterfaceSuperIgnored.java");
+        assertCorrectExceptionsFound(findExceptions().keySet());
     }
 
     public void testChainingFound() {
@@ -105,6 +105,11 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     public void testThrowDocFound() {
         configure("ThrowDocFound.java");
         assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+    }
+
+    public void testOverrideFound() {
+        configure("OverrideFound.java");
+        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, RUNTIME);
     }
 
     private Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions() {
