@@ -5,6 +5,7 @@ import com.intellij.psi.impl.compiled.ClsMethodImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.psi.MethodInheritanceUtils;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
+import com.thomas.checkMate.utilities.JavaLangUtil;
 
 import java.util.*;
 
@@ -62,10 +63,12 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     public void visitSource(PsiMethod method) {
         boolean sourceFound = false;
         if (method instanceof ClsMethodImpl) {
-            PsiMethod sourceMirrorMethod = ((ClsMethodImpl) method).getSourceMirrorMethod();
-            if (sourceMirrorMethod != null) {
-                sourceFound = true;
-                uniqueVisit(sourceMirrorMethod);
+            if (!JavaLangUtil.isJavaSource(method)) {
+                PsiMethod sourceMirrorMethod = ((ClsMethodImpl) method).getSourceMirrorMethod();
+                if (sourceMirrorMethod != null) {
+                    sourceFound = true;
+                    uniqueVisit(sourceMirrorMethod);
+                }
             }
         }
         if (!sourceFound) {
@@ -78,10 +81,6 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
             visitedElements.add(method);
             super.visitMethod(method);
         }
-    }
-
-    private boolean alreadyVisited(PsiElement element) {
-        return visitedElements.contains(element);
     }
 
     public Map<PsiType, Set<DiscoveredExceptionIndicator>> getDiscoveredExceptions() {

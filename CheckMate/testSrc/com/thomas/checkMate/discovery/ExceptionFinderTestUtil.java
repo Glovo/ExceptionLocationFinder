@@ -1,6 +1,6 @@
 package com.thomas.checkMate.discovery;
 
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 
 public class ExceptionFinderTestUtil {
     private static final String BASE_FILE_DIR = "base/";
@@ -14,7 +14,7 @@ public class ExceptionFinderTestUtil {
             "Thrower.java",
             "other_package/OtherCustomUncheckedException.java"};
 
-    public static void configure(JavaCodeInsightTestFixture fixture, String testFileDir, String... testFiles) {
+    public static void configure(CodeInsightTestFixture fixture, String testFileDir, String... testFiles) {
         int totalLength = COMMON_TEST_FILES.length + testFiles.length;
         String[] allFiles = new String[COMMON_TEST_FILES.length + testFiles.length];
         for (String commonFile : COMMON_TEST_FILES) {

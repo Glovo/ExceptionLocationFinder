@@ -112,6 +112,11 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, RUNTIME);
     }
 
+//    public void testJavaLangIgnored() {
+//        configure("JavaLangIgnored.java");
+//        assertCorrectExceptionsFound(findExceptions().keySet());
+//    }
+
     private Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions() {
         return TestExceptionFinder.findExceptions(myFixture);
     }

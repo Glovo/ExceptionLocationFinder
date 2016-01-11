@@ -1,6 +1,7 @@
 package com.thomas.checkMate.util;
 
 import com.intellij.psi.PsiType;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.thomas.checkMate.discovery.ExceptionFinder;
 import com.thomas.checkMate.discovery.factories.DiscovererFactory;
@@ -15,7 +16,7 @@ import java.util.Set;
 
 public class TestExceptionFinder {
 
-    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions(JavaCodeInsightTestFixture myFixture) {
+    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions(CodeInsightTestFixture myFixture) {
         PsiMethodCallExpressionExtractor expressionExtractor = TestExtractorFactory.createExpressionExtractor(myFixture);
         List<ExceptionIndicatorDiscoverer> allDiscoverers = DiscovererFactory.createAllDiscoverers(myFixture.getProject());
         return ExceptionFinder.find(expressionExtractor.extract(), allDiscoverers);
