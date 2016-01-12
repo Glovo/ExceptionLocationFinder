@@ -22,6 +22,6 @@ public class TestExceptionFinder {
 
     public static Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions(CodeInsightTestFixture myFixture, List<ExceptionIndicatorDiscoverer> discoverers) {
         PsiMethodCallExpressionExtractor expressionExtractor = TestExtractorFactory.createExpressionExtractor(myFixture);
-        return ExceptionFinder.find(expressionExtractor.extract(), discoverers, false);
+        return ExceptionFinder.find(expressionExtractor.extract(), discoverers, false, true);
     }
 }

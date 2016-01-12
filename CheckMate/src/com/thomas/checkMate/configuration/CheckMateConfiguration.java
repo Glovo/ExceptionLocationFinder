@@ -58,6 +58,7 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
     public boolean isModified() {
         boolean modified = settingsForm.getIncludeJavaSrc() != checkMateSettings.getIncludeJavaSrc();
         modified = modified || settingsForm.getIncludeJavaDocs() != checkMateSettings.getIncludeJavaDocs();
+        modified = modified || settingsForm.getIncludeErrors() != checkMateSettings.getIncludeErrors();
         return modified;
     }
 
@@ -65,6 +66,7 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
     public void apply() throws ConfigurationException {
         checkMateSettings.setIncludeJavaSrc(settingsForm.getIncludeJavaSrc());
         checkMateSettings.setIncludeJavaDocs(settingsForm.getIncludeJavaDocs());
+        checkMateSettings.setIncludeErrors(settingsForm.getIncludeErrors());
     }
 
     @Override

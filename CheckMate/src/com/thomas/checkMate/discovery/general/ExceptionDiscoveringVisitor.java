@@ -2,8 +2,10 @@ package com.thomas.checkMate.discovery.general;
 
 import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsMethodImpl;
+import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.psi.MethodInheritanceUtils;
+import com.intellij.util.Query;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 import com.thomas.checkMate.utilities.JavaLangUtil;
 
@@ -16,10 +18,10 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     private Set<PsiElement> visitedElements = new HashSet<>();
     private boolean includeJavaSrc;
 
-    public ExceptionDiscoveringVisitor(PsiElement elementToVisit, List<ExceptionIndicatorDiscoverer> discovererList, boolean includeJavaSrc) {
+    public ExceptionDiscoveringVisitor(PsiElement elementToVisit, List<ExceptionIndicatorDiscoverer> discovererList, boolean includeJavaSrc, boolean includeErrors) {
         this.tryStatementTracker = new TryStatementTracker(elementToVisit);
         this.discovererList = discovererList;
-        UncheckedValidator uncheckedValidator = new UncheckedValidator(elementToVisit.getManager(), elementToVisit.getResolveScope());
+        UncheckedValidator uncheckedValidator = new UncheckedValidator(elementToVisit.getManager(), elementToVisit.getResolveScope(), includeErrors);
         this.discovererList.forEach(d -> {
             d.setTryStatementTracker(tryStatementTracker);
             d.setUncheckedValidator(uncheckedValidator);
@@ -54,12 +56,19 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     public void visitMethod(PsiMethod method) {
         visitSource(method);
         Set<PsiMethod> siblings = MethodInheritanceUtils.calculateSiblingMethods(method);
-        List<PsiClass> implementingClasses = Arrays.asList(MethodInheritanceUtils.findAvailableSubClassesForMethod(method));
-        siblings.forEach(s -> {
-            if (implementingClasses.contains(PsiTreeUtil.getParentOfType(s, PsiClass.class))) {
-                visitSource(s);
+        PsiClass psiClass = PsiTreeUtil.getParentOfType(method, PsiClass.class);
+        if (psiClass != null) {
+            String qualifiedName = psiClass.getQualifiedName();
+            if (qualifiedName != null && !qualifiedName.startsWith("java.")) {
+                Query<PsiClass> search = ClassInheritorsSearch.search(psiClass);
+                Collection<PsiClass> implementingClasses = search.findAll();
+                siblings.forEach(s -> {
+                    if (implementingClasses.contains(PsiTreeUtil.getParentOfType(s, PsiClass.class))) {
+                        visitSource(s);
+                    }
+                });
             }
-        });
+        }
     }
 
     public void visitSource(PsiMethod method) {

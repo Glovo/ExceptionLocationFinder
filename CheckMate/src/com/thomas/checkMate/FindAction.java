@@ -57,7 +57,8 @@ public class FindAction extends AnAction {
         //Get selected discoverers
         List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createSelectedDiscovers(project, checkMateSettings.getIncludeJavaDocs());
         //Find all uncaught unchecked exceptions in extracted method call expressions with the selected discoverers
-        ComputableExceptionFinder exceptionFinder = new ComputableExceptionFinder(psiMethodCalls, discovererList, checkMateSettings.getIncludeJavaSrc());
+        ComputableExceptionFinder exceptionFinder =
+                new ComputableExceptionFinder(psiMethodCalls, discovererList, checkMateSettings.getIncludeJavaSrc(), checkMateSettings.getIncludeErrors());
         Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ProgressManager.getInstance()
                 .runProcessWithProgressSynchronously(exceptionFinder, "Searching For Unchecked Exceptions", true, project);
         if (discoveredExceptions.keySet().size() < 1) {
@@ -73,7 +74,7 @@ public class FindAction extends AnAction {
             generateTryCatch(statementExtractor, generateDialog, project, editor);
         } else {
             //The action was cancelled
-            psiFile.navigate(true);
+            psiFile.navigate(false);
         }
     }
 

@@ -39,7 +39,7 @@ public class ExceptionForm {
         exceptionList.setModel(listModel);
         exceptionList.addListSelectionListener(e -> {
             populateMethodListForSelectedExceptionWithIndex(exceptionList.getLeadSelectionIndex());
-            currentFile.navigate(true);
+            currentFile.navigate(false);
         });
         exceptionList.setCellRenderer(new PsiTypeCellRenderer());
         return exceptionList;

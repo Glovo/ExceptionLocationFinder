@@ -18,22 +18,19 @@ public class ComputableExceptionFinder implements ThrowableComputable<Map<PsiTyp
     private Set<PsiCallExpression> expressions;
     private List<ExceptionIndicatorDiscoverer> discovererList;
     private boolean includeJavaSrc;
+    private boolean includeErrors;
 
-    public ComputableExceptionFinder(Set<PsiCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList, boolean includeJavaSrc) {
+    public ComputableExceptionFinder(Set<PsiCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList, boolean includeJavaSrc, boolean includeErrors) {
         this.expressions = expressions;
         this.discovererList = discovererList;
         this.includeJavaSrc = includeJavaSrc;
+        this.includeErrors = includeErrors;
     }
 
     @Override
     public Map<PsiType, Set<DiscoveredExceptionIndicator>> compute() {
         ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
         indicator.setIndeterminate(true);
-        return ApplicationManager.getApplication().runReadAction(new Computable<Map<PsiType, Set<DiscoveredExceptionIndicator>>>() {
-            @Override
-            public Map<PsiType, Set<DiscoveredExceptionIndicator>> compute() {
-                return ExceptionFinder.find(expressions, discovererList, includeJavaSrc);
-            }
-        });
+        return ApplicationManager.getApplication().runReadAction((Computable<Map<PsiType, Set<DiscoveredExceptionIndicator>>>) () -> ExceptionFinder.find(expressions, discovererList, includeJavaSrc, includeErrors));
     }
 }

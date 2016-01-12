@@ -12,15 +12,21 @@ import java.util.List;
 public class UncheckedValidator {
     private final PsiClassType javaLangError;
     private final PsiClassType javaLangRuntimeException;
+    private final boolean includeErrors;
 
-    public UncheckedValidator(PsiManager psiManager, GlobalSearchScope globalSearchScope) {
+    public UncheckedValidator(PsiManager psiManager, GlobalSearchScope globalSearchScope, boolean includeErrors) {
         this.javaLangError = PsiType.getJavaLangError(psiManager, globalSearchScope);
         this.javaLangRuntimeException = PsiType.getJavaLangRuntimeException(psiManager, globalSearchScope);
+        this.includeErrors = includeErrors;
     }
 
     public boolean isUncheckedOrError(PsiType psiType) {
         List<PsiType> superTypes = getSupers(psiType, new ArrayList<>());
-        return psiType.equals(javaLangRuntimeException) || psiType.equals(javaLangError) || superTypes.contains(javaLangRuntimeException) || superTypes.contains(javaLangError);
+        boolean isUncheckedOrError = psiType.equals(javaLangRuntimeException) || superTypes.contains(javaLangRuntimeException);
+        if (includeErrors) {
+            isUncheckedOrError = isUncheckedOrError || psiType.equals(javaLangError) || superTypes.contains(javaLangError);
+        }
+        return isUncheckedOrError;
     }
 
     private List<PsiType> getSupers(PsiType psiType, List<PsiType> superTypes) {

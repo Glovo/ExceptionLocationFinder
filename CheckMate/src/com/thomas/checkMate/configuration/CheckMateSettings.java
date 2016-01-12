@@ -11,6 +11,7 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
     //These fields have to be public for inclusion in Persistent State.
     public boolean includeJavaSrc = false;
     public boolean includeJavaDocs = true;
+    public boolean includeErrors = false;
 
     public boolean getIncludeJavaSrc() {
         return includeJavaSrc;
@@ -26,6 +27,14 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
 
     public void setIncludeJavaDocs(boolean includeJavaDocs) {
         this.includeJavaDocs = includeJavaDocs;
+    }
+
+    public boolean getIncludeErrors() {
+        return includeErrors;
+    }
+
+    public void setIncludeErrors(boolean includeErrors) {
+        this.includeErrors = includeErrors;
     }
 
     public static CheckMateSettings getInstance() {
