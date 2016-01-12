@@ -8,13 +8,14 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiStatement;
 import com.intellij.psi.PsiType;
 import com.thomas.checkMate.configuration.CheckMateSettings;
-import com.thomas.checkMate.discovery.ExceptionFinder;
+import com.thomas.checkMate.discovery.ComputableExceptionFinder;
 import com.thomas.checkMate.discovery.factories.DiscovererFactory;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
 import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
@@ -53,18 +54,19 @@ public class FindAction extends AnAction {
             return;
         }
 
-        //Get all discoverers
-        //TODO: Select discoverers with settings
+        //Get selected discoverers
         List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createSelectedDiscovers(project, checkMateSettings.getIncludeJavaDocs());
-        //Find all uncaught unchecked exceptions in extracted method call expressions with the discoverers
-        Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ExceptionFinder.find(psiMethodCalls, discovererList, checkMateSettings.getIncludeJavaSrc());
+        //Find all uncaught unchecked exceptions in extracted method call expressions with the selected discoverers
+        ComputableExceptionFinder exceptionFinder = new ComputableExceptionFinder(psiMethodCalls, discovererList, checkMateSettings.getIncludeJavaSrc());
+        Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ProgressManager.getInstance()
+                .runProcessWithProgressSynchronously(exceptionFinder, "Searching For Unchecked Exceptions", true, project);
         if (discoveredExceptions.keySet().size() < 1) {
             showInformationHint(editor, "No uncaught unchecked exceptions found in the selected statements");
             return;
         }
 
         //Generate dialog with all discovered uncaught unchecked exceptions
-        GenerateDialog generateDialog = new GenerateDialog(discoveredExceptions, project);
+        GenerateDialog generateDialog = new GenerateDialog(discoveredExceptions, psiFile);
         generateDialog.show();
         if (generateDialog.isOK()) {
             //If ok is pressed, start writing the try catch statement for the selected exceptions

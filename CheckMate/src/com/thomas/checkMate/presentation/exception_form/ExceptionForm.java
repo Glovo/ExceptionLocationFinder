@@ -2,6 +2,7 @@ package com.thomas.checkMate.presentation.exception_form;
 
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiType;
 import com.intellij.ui.JBSplitter;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
@@ -18,9 +19,11 @@ public class ExceptionForm {
     private JList<DiscoveredExceptionIndicator> method_list;
     private Map<PsiType, Set<DiscoveredExceptionIndicator>> exceptionMap;
     private JBSplitter splitter;
+    private PsiFile currentFile;
 
-    public ExceptionForm(Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptionMap) {
+    public ExceptionForm(Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptionMap, PsiFile currentFile) {
         this.exceptionMap = discoveredExceptionMap;
+        this.currentFile = currentFile;
         exception_list = createExceptionList(discoveredExceptionMap.keySet());
         method_list = createMethodList();
         LabeledComponent decoratedExceptionList = new DefaultListDecorator<PsiType>().decorate(exception_list, "Select exceptions to include");
@@ -36,6 +39,7 @@ public class ExceptionForm {
         exceptionList.setModel(listModel);
         exceptionList.addListSelectionListener(e -> {
             populateMethodListForSelectedExceptionWithIndex(exceptionList.getLeadSelectionIndex());
+            currentFile.navigate(true);
         });
         exceptionList.setCellRenderer(new PsiTypeCellRenderer());
         return exceptionList;

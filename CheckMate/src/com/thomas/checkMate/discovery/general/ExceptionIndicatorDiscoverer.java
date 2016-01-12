@@ -1,5 +1,7 @@
 package com.thomas.checkMate.discovery.general;
 
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
@@ -31,7 +33,7 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
                 if (psiType != null && isUnChecked(psiType) && isUncaught(psiType)) {
                     PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
                     DiscoveredExceptionIndicator discoveredExceptionIndicator = new DiscoveredExceptionIndicator(psiElement, psiMethod);
-                    logger.info(String.format("%s found in %s(%s)", psiType.getCanonicalText(), psiMethod, getElementClass()));
+                    notifyProgress(psiType.getCanonicalText(), psiMethod);
                     this.addToMap(psiType, discoveredExceptionIndicator, discoveredExceptions);
                 }
             }
@@ -57,6 +59,15 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
             discoveredThrowStatements.add(discoveredExceptionIndicator);
             discoveredExceptions.put(psiType, discoveredThrowStatements);
         }
+    }
+
+    private void notifyProgress(String exceptionName, PsiMethod encapsulatingMethod) {
+        String exceptionFound = String.format("%s in %s", exceptionName, encapsulatingMethod.getName());
+        ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+        if (indicator != null) {
+            indicator.setText2(exceptionFound);
+        }
+        logger.info(exceptionFound);
     }
 
     public void setTryStatementTracker(TryStatementTracker tryStatementTracker) {
