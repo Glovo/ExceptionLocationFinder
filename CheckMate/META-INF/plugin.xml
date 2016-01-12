@@ -31,7 +31,9 @@
 
     <application-components>
         <!-- Add your application components here -->
-
+        <component>
+            <implementation-class>com.thomas.checkMate.configuration.CheckMateSettings</implementation-class>
+        </component>
         <component>
             <implementation-class>com.thomas.checkMate.configuration.CheckMateConfiguration</implementation-class>
         </component>

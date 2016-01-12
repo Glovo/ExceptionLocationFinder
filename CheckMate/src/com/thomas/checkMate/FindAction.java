@@ -13,6 +13,7 @@ import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiStatement;
 import com.intellij.psi.PsiType;
+import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.ExceptionFinder;
 import com.thomas.checkMate.discovery.factories.DiscovererFactory;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
@@ -28,6 +29,12 @@ import java.util.Set;
 
 
 public class FindAction extends AnAction {
+    private CheckMateSettings checkMateSettings;
+
+    public FindAction() {
+        checkMateSettings = CheckMateSettings.getInstance();
+    }
+
     public void actionPerformed(AnActionEvent e) {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
@@ -49,9 +56,8 @@ public class FindAction extends AnAction {
         //Get all discoverers
         //TODO: Select discoverers with settings
         List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createAllDiscoverers(project);
-
         //Find all uncaught unchecked exceptions in extracted method call expressions with the discoverers
-        Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ExceptionFinder.find(psiMethodCalls, discovererList);
+        Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ExceptionFinder.find(psiMethodCalls, discovererList, checkMateSettings.getIncludeJavaSrc());
         if (discoveredExceptions.keySet().size() < 1) {
             showInformationHint(editor, "No uncaught unchecked exceptions found in the selected statements");
             return;

@@ -14,11 +14,11 @@ import java.util.Set;
 
 public class ExceptionFinder {
 
-    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> find(Set<PsiCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList) {
+    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> find(Set<PsiCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList, boolean includeJavaSrc) {
         Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = new HashMap<>();
         ExceptionDiscoveringVisitor exceptionDiscoveringVisitor;
         for (PsiExpression expression : expressions) {
-            exceptionDiscoveringVisitor = new ExceptionDiscoveringVisitor(expression, discovererList);
+            exceptionDiscoveringVisitor = new ExceptionDiscoveringVisitor(expression, discovererList, includeJavaSrc);
             expression.accept(exceptionDiscoveringVisitor);
             mergeResult(discoveredExceptions, exceptionDiscoveringVisitor.getDiscoveredExceptions());
         }

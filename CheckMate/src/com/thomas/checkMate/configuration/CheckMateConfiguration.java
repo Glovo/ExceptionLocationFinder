@@ -1,6 +1,6 @@
 package com.thomas.checkMate.configuration;
 
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
@@ -9,13 +9,13 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-@State(name = "CheckMateConfiguration", storages = {@Storage(id = "CheckMateConfiguration", file = StoragePathMacros.APP_CONFIG + "/CheckMate.xml")})
-public class CheckMateConfiguration implements ApplicationComponent, PersistentStateComponent<CheckMateSettings>, SearchableConfigurable {
+//@State(name = "CheckMateConfiguration", storages = {@Storage(id = "CheckMateConfiguration", file = StoragePathMacros.APP_CONFIG + "/CheckMate.xml")})
+public class CheckMateConfiguration implements ApplicationComponent, SearchableConfigurable {
     private CheckMateSettings checkMateSettings;
     private SettingsForm settingsForm;
 
-    public CheckMateConfiguration() {
-
+    public CheckMateConfiguration(CheckMateSettings checkMateSettings) {
+        this.checkMateSettings = checkMateSettings;
     }
 
     public void initComponent() {
@@ -29,21 +29,21 @@ public class CheckMateConfiguration implements ApplicationComponent, PersistentS
         return "CheckMateConfiguration";
     }
 
-    @Nullable
-    @Override
-    public CheckMateSettings getState() {
-        return checkMateSettings;
-    }
-
-    @Override
-    public void loadState(CheckMateSettings checkMateSettings) {
-        this.checkMateSettings = checkMateSettings;
-        if (settingsForm == null) {
-            settingsForm = new SettingsForm(checkMateSettings);
-        } else {
-            settingsForm.reset(checkMateSettings);
-        }
-    }
+//    @Nullable
+//    @Override
+//    public CheckMateSettings getState() {
+//        return checkMateSettings;
+//    }
+//
+//    @Override
+//    public void loadState(CheckMateSettings checkMateSettings) {
+//        this.checkMateSettings = checkMateSettings;
+//        if (settingsForm == null) {
+//            settingsForm = new SettingsForm(checkMateSettings);
+//        } else {
+//            settingsForm.reset(checkMateSettings);
+//        }
+//    }
 
     @NotNull
     @Override
@@ -74,7 +74,7 @@ public class CheckMateConfiguration implements ApplicationComponent, PersistentS
     public JComponent createComponent() {
         if (settingsForm == null) {
             if (checkMateSettings == null) {
-                checkMateSettings = new CheckMateSettings();
+                checkMateSettings = CheckMateSettings.getInstance();
             }
             settingsForm = new SettingsForm(checkMateSettings);
         }

@@ -14,8 +14,9 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     private TryStatementTracker tryStatementTracker;
     private List<ExceptionIndicatorDiscoverer> discovererList;
     private Set<PsiElement> visitedElements = new HashSet<>();
+    private boolean includeJavaSrc;
 
-    public ExceptionDiscoveringVisitor(PsiElement elementToVisit, List<ExceptionIndicatorDiscoverer> discovererList) {
+    public ExceptionDiscoveringVisitor(PsiElement elementToVisit, List<ExceptionIndicatorDiscoverer> discovererList, boolean includeJavaSrc) {
         this.tryStatementTracker = new TryStatementTracker(elementToVisit);
         this.discovererList = discovererList;
         UncheckedValidator uncheckedValidator = new UncheckedValidator(elementToVisit.getManager(), elementToVisit.getResolveScope());
@@ -23,6 +24,7 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
             d.setTryStatementTracker(tryStatementTracker);
             d.setUncheckedValidator(uncheckedValidator);
         });
+        this.includeJavaSrc = includeJavaSrc;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     public void visitSource(PsiMethod method) {
         boolean sourceFound = false;
         if (method instanceof ClsMethodImpl) {
-            if (!JavaLangUtil.isJavaSource(method)) {
+            if (includeJavaSrc || !JavaLangUtil.isJavaSource(method)) {
                 PsiMethod sourceMirrorMethod = ((ClsMethodImpl) method).getSourceMirrorMethod();
                 if (sourceMirrorMethod != null) {
                     sourceFound = true;
