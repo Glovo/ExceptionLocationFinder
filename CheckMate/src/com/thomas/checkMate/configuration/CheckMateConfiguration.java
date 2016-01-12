@@ -18,33 +18,6 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
         this.checkMateSettings = checkMateSettings;
     }
 
-    public void initComponent() {
-    }
-
-    public void disposeComponent() {
-    }
-
-    @NotNull
-    public String getComponentName() {
-        return "CheckMateConfiguration";
-    }
-
-//    @Nullable
-//    @Override
-//    public CheckMateSettings getState() {
-//        return checkMateSettings;
-//    }
-//
-//    @Override
-//    public void loadState(CheckMateSettings checkMateSettings) {
-//        this.checkMateSettings = checkMateSettings;
-//        if (settingsForm == null) {
-//            settingsForm = new SettingsForm(checkMateSettings);
-//        } else {
-//            settingsForm.reset(checkMateSettings);
-//        }
-//    }
-
     @NotNull
     @Override
     public String getId() {
@@ -83,12 +56,15 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
 
     @Override
     public boolean isModified() {
-        return settingsForm.getIncludeJavaSrc() != checkMateSettings.getIncludeJavaSrc();
+        boolean modified = settingsForm.getIncludeJavaSrc() != checkMateSettings.getIncludeJavaSrc();
+        modified = modified || settingsForm.getIncludeJavaDocs() != checkMateSettings.getIncludeJavaDocs();
+        return modified;
     }
 
     @Override
     public void apply() throws ConfigurationException {
         checkMateSettings.setIncludeJavaSrc(settingsForm.getIncludeJavaSrc());
+        checkMateSettings.setIncludeJavaDocs(settingsForm.getIncludeJavaDocs());
     }
 
     @Override
@@ -96,7 +72,21 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
         settingsForm.reset(checkMateSettings);
     }
 
+    public void initComponent() {
+        //Do nothing
+    }
+
+    public void disposeComponent() {
+        //Do nothing
+    }
+
+    @NotNull
+    public String getComponentName() {
+        return "CheckMateConfiguration";
+    }
+
     @Override
     public void disposeUIResources() {
+        //Do nothing
     }
 }

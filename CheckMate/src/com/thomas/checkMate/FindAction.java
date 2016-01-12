@@ -55,7 +55,7 @@ public class FindAction extends AnAction {
 
         //Get all discoverers
         //TODO: Select discoverers with settings
-        List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createAllDiscoverers(project);
+        List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createSelectedDiscovers(project, checkMateSettings.getIncludeJavaDocs());
         //Find all uncaught unchecked exceptions in extracted method call expressions with the discoverers
         Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ExceptionFinder.find(psiMethodCalls, discovererList, checkMateSettings.getIncludeJavaSrc());
         if (discoveredExceptions.keySet().size() < 1) {

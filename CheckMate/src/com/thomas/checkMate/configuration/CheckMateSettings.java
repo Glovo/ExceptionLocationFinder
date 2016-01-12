@@ -8,8 +8,9 @@ import org.jetbrains.annotations.Nullable;
 
 @State(name = "CheckMateSettings", storages = {@Storage(id = "CheckMateSettings", file = StoragePathMacros.APP_CONFIG + "/CheckMate.xml")})
 public class CheckMateSettings implements ApplicationComponent, PersistentStateComponent<CheckMateSettings> {
-    //Has to be public for inclusion in Persistent State.
+    //These fields have to be public for inclusion in Persistent State.
     public boolean includeJavaSrc = false;
+    public boolean includeJavaDocs = true;
 
     public boolean getIncludeJavaSrc() {
         return includeJavaSrc;
@@ -17,6 +18,14 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
 
     public void setIncludeJavaSrc(boolean isJavaSource) {
         this.includeJavaSrc = isJavaSource;
+    }
+
+    public boolean getIncludeJavaDocs() {
+        return includeJavaDocs;
+    }
+
+    public void setIncludeJavaDocs(boolean includeJavaDocs) {
+        this.includeJavaDocs = includeJavaDocs;
     }
 
     public static CheckMateSettings getInstance() {

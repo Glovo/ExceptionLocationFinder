@@ -3,7 +3,9 @@ package com.thomas.checkMate.discovery;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiType;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.thomas.checkMate.discovery.factories.DiscovererFactory;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
+import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
 import com.thomas.checkMate.util.TestExceptionFinder;
 
 import java.io.File;
@@ -112,10 +114,12 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, RUNTIME);
     }
 
-//    public void testJavaLangIgnored() {
-//        configure("JavaLangIgnored.java");
-//        assertCorrectExceptionsFound(findExceptions().keySet());
-//    }
+    public void testDocsIgnoredWhenSet() {
+        configure("ThrowDocFound.java");
+        List<ExceptionIndicatorDiscoverer> selectedDiscovers = DiscovererFactory.createSelectedDiscovers(myFixture.getProject(), false);
+        Map<PsiType, Set<DiscoveredExceptionIndicator>> exceptions = TestExceptionFinder.findExceptions(myFixture, selectedDiscovers);
+        assertEquals(0, exceptions.size());
+    }
 
     private Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions() {
         return TestExceptionFinder.findExceptions(myFixture);

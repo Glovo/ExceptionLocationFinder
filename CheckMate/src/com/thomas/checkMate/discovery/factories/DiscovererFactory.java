@@ -24,6 +24,16 @@ public class DiscovererFactory {
         return new DocTagDiscoverer(typeResolver);
     }
 
+    public static List<ExceptionIndicatorDiscoverer> createSelectedDiscovers(Project project, boolean includeJavaDocs) {
+        List<ExceptionIndicatorDiscoverer> discovererList = new ArrayList<>();
+        if (includeJavaDocs) {
+            discovererList.addAll(createAllDiscoverers(project));
+        } else {
+            discovererList.add(createThrowStatementDiscoverer());
+        }
+        return discovererList;
+    }
+
     public static List<ExceptionIndicatorDiscoverer> createAllDiscoverers(Project project) {
         List<ExceptionIndicatorDiscoverer> discoverers = new ArrayList<>();
         discoverers.add(createThrowStatementDiscoverer());
