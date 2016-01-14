@@ -28,7 +28,6 @@ public class PsiMethodCallExpressionExtractor {
                     .filter(e -> !scopeTracker.foundInScopes(e, selectedExpressions))
                     .forEach(selectedExpressions::add);
         });
-        System.out.println(selectedExpressions);
         return selectedExpressions;
     }
 }
