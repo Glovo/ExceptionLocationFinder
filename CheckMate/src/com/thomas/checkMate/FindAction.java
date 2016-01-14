@@ -32,6 +32,7 @@ public class FindAction extends AnAction {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         Project project = e.getProject();
+        e.getPlace();
         if (psiFile == null || editor == null) {
             return;
         }

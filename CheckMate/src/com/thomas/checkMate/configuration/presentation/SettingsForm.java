@@ -13,7 +13,7 @@ public class SettingsForm extends JPanel {
     private JCheckBox errorsCBox;
     private static final String INCLUDE_ERRORS = "Include errors in search results";
     private JCheckBox inheritorsCBox;
-    private static final String INCLUDE_INHERITORS = "Search through overriding methods of subclasses (may increase search time)";
+    private static final String INCLUDE_INHERITORS = "Search through all overrides of encountered methods (may include false positives and increase search times)";
     private DefaultListModel<String> srcWhiteListModel;
     private static final String SRC_WHITELIST = "Sources whitelist (by default all classes from java*, org.xml* and org.omg* are ignored)";
     private static final String SRC_WHITELIST_DETAIL = "Include all classes with a FQN that starts with: ";

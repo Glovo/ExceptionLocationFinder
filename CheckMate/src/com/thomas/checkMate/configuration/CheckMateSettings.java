@@ -21,6 +21,9 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
 
     public CheckMateSettings() {
         srcWhiteList.add("javax.persistence");
+        excBlackList.add("java.lang.NullPointerException");
+        excBlackList.add("java.lang.IllegalArgumentException");
+        excBlackList.add("java.lang.IndexOutOfBoundsException");
     }
 
     public boolean getIncludeJavaDocs() {

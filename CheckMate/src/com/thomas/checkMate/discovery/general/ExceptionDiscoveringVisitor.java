@@ -73,7 +73,9 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
             inheritors.forEach(i -> {
                 PsiMethod[] overridingMethods = i.findMethodsBySignature(method, false);
                 for (PsiMethod psiMethod : overridingMethods) {
-                    this.visitMethod(psiMethod);
+                    if (!psiMethod.equals(method)) {
+                        this.visitMethod(psiMethod);
+                    }
                 }
             });
         }
@@ -83,10 +85,16 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     public void visitSource(PsiMethod method) {
         boolean srcFound = false;
         if (method instanceof ClsMethodImpl) {
-            PsiMethod sourceMirrorMethod = ((ClsMethodImpl) method).getSourceMirrorMethod();
-            if (sourceMirrorMethod != null) {
+            PsiMethod sourceMirror = ((ClsMethodImpl) method).getSourceMirrorMethod();
+            if (sourceMirror != null) {
                 srcFound = true;
-                uniqueVisit(sourceMirrorMethod);
+                uniqueVisit(sourceMirror);
+            } else {
+                PsiMethod mirror = (PsiMethod) ((ClsMethodImpl) method).getMirror();
+                if (mirror != null) {
+                    srcFound = true;
+                    uniqueVisit(mirror);
+                }
             }
         }
         if (!srcFound) {
@@ -100,7 +108,7 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
             super.visitMethod(method);
         }
     }
-    
+
     public Map<PsiType, Set<DiscoveredExceptionIndicator>> getDiscoveredExceptions() {
         return discoveredExceptions;
     }

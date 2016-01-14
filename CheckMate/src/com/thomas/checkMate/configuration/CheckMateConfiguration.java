@@ -77,7 +77,7 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
 
     @Override
     public void reset() {
-        settingsForm.reset(checkMateSettings);
+        settingsForm.reset(new CheckMateSettings());
     }
 
     public void initComponent() {
