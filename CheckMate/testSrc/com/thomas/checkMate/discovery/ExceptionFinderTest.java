@@ -3,9 +3,8 @@ package com.thomas.checkMate.discovery;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiType;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.thomas.checkMate.discovery.factories.DiscovererFactory;
+import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
-import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
 import com.thomas.checkMate.util.TestExceptionFinder;
 
 import java.io.File;
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
 public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     private static final String CUSTOM_UNCHECKED = "base.CustomUncheckedException";
     private static final String OTHER_UNCHECKED = "base.other_package.OtherCustomUncheckedException";
+    private static final String INDIRECT_UNCHECKED = "base.IndirectUncheckedException";
     private static final String RUNTIME = "RuntimeException";
     private static final String TEST_FILE_DIR = "exception_finder/";
 
@@ -106,19 +106,26 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
 
     public void testThrowDocFound() {
         configure("ThrowDocFound.java");
+        CheckMateSettings.getInstance().setIncludeJavaDocs(true);
         assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
-    }
-
-    public void testOverrideFound() {
-        configure("OverrideFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, RUNTIME);
     }
 
     public void testDocsIgnoredWhenSet() {
         configure("ThrowDocFound.java");
-        List<ExceptionIndicatorDiscoverer> selectedDiscovers = DiscovererFactory.createSelectedDiscovers(myFixture.getProject(), false);
-        Map<PsiType, Set<DiscoveredExceptionIndicator>> exceptions = TestExceptionFinder.findExceptions(myFixture, selectedDiscovers);
-        assertEquals(0, exceptions.size());
+        CheckMateSettings.getInstance().setIncludeJavaDocs(false);
+        assertEquals(0, findExceptions().size());
+    }
+
+    public void testOverrideFound() {
+        configure("OverrideFound.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, RUNTIME);
+    }
+
+    public void testOverrideIgnoredWhenSet() {
+        configure("OverrideFound.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(false);
+        assertEquals(0, findExceptions().keySet().size());
     }
 
     private Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions() {

@@ -3,6 +3,7 @@ package com.thomas.checkMate.discovery.factories;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElementFactory;
+import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.doc_throw_tag.DocTagDiscoverer;
 import com.thomas.checkMate.discovery.doc_throw_tag.type_resolving.DocTagTypeResolver;
 import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiscovererFactory {
+    private static final CheckMateSettings checkMateSettings = CheckMateSettings.getInstance();
+
     public static ThrowStatementDiscoverer createThrowStatementDiscoverer() {
         ThrowStatementTypeResolver throwStatementTypeResolver = new ThrowStatementTypeResolver();
         return new ThrowStatementDiscoverer(throwStatementTypeResolver);
@@ -24,9 +27,9 @@ public class DiscovererFactory {
         return new DocTagDiscoverer(typeResolver);
     }
 
-    public static List<ExceptionIndicatorDiscoverer> createSelectedDiscovers(Project project, boolean includeJavaDocs) {
+    public static List<ExceptionIndicatorDiscoverer> createSelectedDiscovers(Project project) {
         List<ExceptionIndicatorDiscoverer> discovererList = new ArrayList<>();
-        if (includeJavaDocs) {
+        if (checkMateSettings.getIncludeJavaDocs()) {
             discovererList.addAll(createAllDiscoverers(project));
         } else {
             discovererList.add(createThrowStatementDiscoverer());

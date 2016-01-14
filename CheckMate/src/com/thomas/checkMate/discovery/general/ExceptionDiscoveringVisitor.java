@@ -4,29 +4,29 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsMethodImpl;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.psi.MethodInheritanceUtils;
-import com.intellij.util.Query;
+import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
-import com.thomas.checkMate.utilities.JavaLangUtil;
+import com.thomas.checkMate.utilities.WhiteListUtil;
 
 import java.util.*;
 
 public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     private Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = new HashMap<>();
+    private Map<PsiClass, Collection<PsiClass>> inheritorCache = new HashMap<>();
     private TryStatementTracker tryStatementTracker;
     private List<ExceptionIndicatorDiscoverer> discovererList;
-    private Set<PsiElement> visitedElements = new HashSet<>();
-    private boolean includeJavaSrc;
+    private Set<PsiElement> visitedMethods = new HashSet<>();
+    private final CheckMateSettings checkMateSettings;
 
-    public ExceptionDiscoveringVisitor(PsiElement elementToVisit, List<ExceptionIndicatorDiscoverer> discovererList, boolean includeJavaSrc, boolean includeErrors) {
+    public ExceptionDiscoveringVisitor(PsiElement elementToVisit, List<ExceptionIndicatorDiscoverer> discovererList) {
+        this.checkMateSettings = CheckMateSettings.getInstance();
         this.tryStatementTracker = new TryStatementTracker(elementToVisit);
         this.discovererList = discovererList;
-        UncheckedValidator uncheckedValidator = new UncheckedValidator(elementToVisit.getManager(), elementToVisit.getResolveScope(), includeErrors);
+        UncheckedValidator uncheckedValidator = new UncheckedValidator(elementToVisit.getManager(), elementToVisit.getResolveScope(), checkMateSettings.getIncludeErrors());
         this.discovererList.forEach(d -> {
             d.setTryStatementTracker(tryStatementTracker);
             d.setUncheckedValidator(uncheckedValidator);
         });
-        this.includeJavaSrc = includeJavaSrc;
     }
 
     @Override
@@ -54,46 +54,53 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
 
 
     public void visitMethod(PsiMethod method) {
-        visitSource(method);
-        Set<PsiMethod> siblings = MethodInheritanceUtils.calculateSiblingMethods(method);
-        PsiClass psiClass = PsiTreeUtil.getParentOfType(method, PsiClass.class);
-        if (psiClass != null) {
-            String qualifiedName = psiClass.getQualifiedName();
-            if (qualifiedName != null && !qualifiedName.startsWith("java.")) {
-                Query<PsiClass> search = ClassInheritorsSearch.search(psiClass);
-                Collection<PsiClass> implementingClasses = search.findAll();
-                siblings.forEach(s -> {
-                    if (implementingClasses.contains(PsiTreeUtil.getParentOfType(s, PsiClass.class))) {
-                        visitSource(s);
-                    }
-                });
+        if (WhiteListUtil.isAllowed(method)) {
+            visitSource(method);
+            if (checkMateSettings.getIncludeInheritors()) {
+                visitInheritors(method);
             }
         }
     }
 
-    public void visitSource(PsiMethod method) {
-        boolean sourceFound = false;
-        if (method instanceof ClsMethodImpl) {
-            if (includeJavaSrc || !JavaLangUtil.isJavaSource(method)) {
-                PsiMethod sourceMirrorMethod = ((ClsMethodImpl) method).getSourceMirrorMethod();
-                if (sourceMirrorMethod != null) {
-                    sourceFound = true;
-                    uniqueVisit(sourceMirrorMethod);
+    public void visitInheritors(PsiMethod method) {
+        PsiClass psiClass = PsiTreeUtil.getParentOfType(method, PsiClass.class);
+        if (psiClass != null) {
+            Collection<PsiClass> inheritors = inheritorCache.get(psiClass);
+            if (inheritors == null) {
+                inheritors = ClassInheritorsSearch.search(psiClass).findAll();
+                inheritorCache.put(psiClass, inheritors);
+            }
+            inheritors.forEach(i -> {
+                PsiMethod[] overridingMethods = i.findMethodsBySignature(method, false);
+                for (PsiMethod psiMethod : overridingMethods) {
+                    this.visitMethod(psiMethod);
                 }
+            });
+        }
+    }
+
+
+    public void visitSource(PsiMethod method) {
+        boolean srcFound = false;
+        if (method instanceof ClsMethodImpl) {
+            PsiMethod sourceMirrorMethod = ((ClsMethodImpl) method).getSourceMirrorMethod();
+            if (sourceMirrorMethod != null) {
+                srcFound = true;
+                uniqueVisit(sourceMirrorMethod);
             }
         }
-        if (!sourceFound) {
+        if (!srcFound) {
             uniqueVisit(method);
         }
     }
 
     public void uniqueVisit(PsiMethod method) {
-        if (!visitedElements.contains(method)) {
-            visitedElements.add(method);
+        if (!visitedMethods.contains(method)) {
+            visitedMethods.add(method);
             super.visitMethod(method);
         }
     }
-
+    
     public Map<PsiType, Set<DiscoveredExceptionIndicator>> getDiscoveredExceptions() {
         return discoveredExceptions;
     }

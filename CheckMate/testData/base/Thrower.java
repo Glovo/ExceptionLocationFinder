@@ -27,10 +27,7 @@ public class Thrower extends SuperThrower implements SuperInterface {
     public void construct() {
         new Thrower();
     }
-
-    public void throwAssertion() {
-        throw new AssertionError("Assertion");
-    }
+    
 
     public void tryCatch() {
         try {

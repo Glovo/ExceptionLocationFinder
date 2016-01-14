@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.ExceptionTypeResolver;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 
@@ -19,6 +20,7 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
     private TryStatementTracker tryStatementTracker;
     private UncheckedValidator uncheckedValidator;
     private Class<T> elementClass;
+    private final CheckMateSettings checkMateSettings = CheckMateSettings.getInstance();
     private static final Logger logger = Logger.getLogger(ExceptionIndicatorDiscoverer.class.getName());
 
     public ExceptionIndicatorDiscoverer(ExceptionTypeResolver<T> exceptionTypeResolver, Class<T> clazz) {
@@ -30,7 +32,7 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
         if (getElementClass().isAssignableFrom(psiElement.getClass())) {
             if (isIndicator(psiElement)) {
                 PsiType psiType = exceptionTypeResolver.resolve(psiElement);
-                if (psiType != null && isUnChecked(psiType) && isUncaught(psiType)) {
+                if (psiType != null && !checkMateSettings.getExcBlackList().contains(psiType.getCanonicalText()) && isUnChecked(psiType) && isUncaught(psiType)) {
                     PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
                     DiscoveredExceptionIndicator discoveredExceptionIndicator = new DiscoveredExceptionIndicator(psiElement, psiMethod);
                     notifyProgress(psiType.getCanonicalText(), psiMethod);

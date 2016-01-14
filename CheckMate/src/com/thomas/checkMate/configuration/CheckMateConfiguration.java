@@ -3,13 +3,13 @@ package com.thomas.checkMate.configuration;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.thomas.checkMate.configuration.presentation.SettingsForm;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-//@State(name = "CheckMateConfiguration", storages = {@Storage(id = "CheckMateConfiguration", file = StoragePathMacros.APP_CONFIG + "/CheckMate.xml")})
 public class CheckMateConfiguration implements ApplicationComponent, SearchableConfigurable {
     private CheckMateSettings checkMateSettings;
     private SettingsForm settingsForm;
@@ -56,17 +56,23 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
 
     @Override
     public boolean isModified() {
-        boolean modified = settingsForm.getIncludeJavaSrc() != checkMateSettings.getIncludeJavaSrc();
-        modified = modified || settingsForm.getIncludeJavaDocs() != checkMateSettings.getIncludeJavaDocs();
+        boolean modified = settingsForm.getIncludeJavaDocs() != checkMateSettings.getIncludeJavaDocs();
         modified = modified || settingsForm.getIncludeErrors() != checkMateSettings.getIncludeErrors();
+        modified = modified || settingsForm.getIncludeInheritors() != checkMateSettings.getIncludeInheritors();
+        modified = modified || !settingsForm.getSrcWhiteList().containsAll(checkMateSettings.getSrcWhiteList());
+        modified = modified || !checkMateSettings.getSrcWhiteList().containsAll(settingsForm.getSrcWhiteList());
+        modified = modified || !settingsForm.getExcBlackList().containsAll(checkMateSettings.getExcBlackList());
+        modified = modified || !checkMateSettings.getExcBlackList().containsAll(settingsForm.getExcBlackList());
         return modified;
     }
 
     @Override
     public void apply() throws ConfigurationException {
-        checkMateSettings.setIncludeJavaSrc(settingsForm.getIncludeJavaSrc());
         checkMateSettings.setIncludeJavaDocs(settingsForm.getIncludeJavaDocs());
         checkMateSettings.setIncludeErrors(settingsForm.getIncludeErrors());
+        checkMateSettings.setIncludeInheritors(settingsForm.getIncludeInheritors());
+        checkMateSettings.setSrcWhiteList(settingsForm.getSrcWhiteList());
+        checkMateSettings.setExcBlackList(settingsForm.getExcBlackList());
     }
 
     @Override

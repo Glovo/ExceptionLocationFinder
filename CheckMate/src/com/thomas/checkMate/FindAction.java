@@ -1,7 +1,6 @@
 package com.thomas.checkMate;
 
 import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -14,7 +13,6 @@ import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiStatement;
 import com.intellij.psi.PsiType;
-import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.ComputableExceptionFinder;
 import com.thomas.checkMate.discovery.factories.DiscovererFactory;
 import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
@@ -30,12 +28,6 @@ import java.util.Set;
 
 
 public class FindAction extends AnAction {
-    private CheckMateSettings checkMateSettings;
-
-    public FindAction() {
-        checkMateSettings = CheckMateSettings.getInstance();
-    }
-
     public void actionPerformed(AnActionEvent e) {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
@@ -55,10 +47,10 @@ public class FindAction extends AnAction {
         }
 
         //Get selected discoverers
-        List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createSelectedDiscovers(project, checkMateSettings.getIncludeJavaDocs());
+        List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createSelectedDiscovers(project);
         //Find all uncaught unchecked exceptions in extracted method call expressions with the selected discoverers
         ComputableExceptionFinder exceptionFinder =
-                new ComputableExceptionFinder(psiMethodCalls, discovererList, checkMateSettings.getIncludeJavaSrc(), checkMateSettings.getIncludeErrors());
+                new ComputableExceptionFinder(psiMethodCalls, discovererList);
         Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ProgressManager.getInstance()
                 .runProcessWithProgressSynchronously(exceptionFinder, "Searching For Unchecked Exceptions", true, project);
         if (discoveredExceptions.keySet().size() < 1) {
@@ -72,17 +64,15 @@ public class FindAction extends AnAction {
         if (generateDialog.isOK()) {
             //If ok is pressed, start writing the try catch statement for the selected exceptions
             generateTryCatch(statementExtractor, generateDialog, project, editor);
-        } else {
-            //The action was cancelled
-            psiFile.navigate(false);
+            currentCaret.removeSelection();
         }
+        psiFile.navigate(true);
     }
 
     private void generateTryCatch(PsiStatementExtractor statementExtractor, GenerateDialog generateDialog, Project project, Editor editor) {
         //Extract the statements that need to be wrapped by the try catch statement
         List<PsiStatement> statements = statementExtractor.extract();
         //Activate the file that needs to be edited
-        NavigationUtil.activateFileWithPsiElement(statements.get(0));
         //Get the selected exceptions
         List<PsiType> selectedExceptionTypes = generateDialog.getSelectedExceptionTypes();
         if (selectedExceptionTypes.size() < 1) {

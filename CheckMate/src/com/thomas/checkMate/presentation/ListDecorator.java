@@ -1,4 +1,4 @@
-package com.thomas.checkMate.presentation.exception_form;
+package com.thomas.checkMate.presentation;
 
 import com.intellij.openapi.ui.LabeledComponent;
 

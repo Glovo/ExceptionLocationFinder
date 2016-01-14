@@ -16,12 +16,8 @@ import java.util.Set;
 public class TestExceptionFinder {
 
     public static Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions(CodeInsightTestFixture myFixture) {
-        List<ExceptionIndicatorDiscoverer> allDiscoverers = DiscovererFactory.createAllDiscoverers(myFixture.getProject());
-        return findExceptions(myFixture, allDiscoverers);
-    }
-
-    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions(CodeInsightTestFixture myFixture, List<ExceptionIndicatorDiscoverer> discoverers) {
+        List<ExceptionIndicatorDiscoverer> discoverers = DiscovererFactory.createSelectedDiscovers(myFixture.getProject());
         PsiMethodCallExpressionExtractor expressionExtractor = TestExtractorFactory.createExpressionExtractor(myFixture);
-        return ExceptionFinder.find(expressionExtractor.extract(), discoverers, false, true);
+        return ExceptionFinder.find(expressionExtractor.extract(), discoverers);
     }
 }

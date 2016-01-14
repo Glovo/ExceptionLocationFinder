@@ -10,9 +10,9 @@ public class BeforeExceptionHierarchyWritten extends TestBase {
             thrower.throwRuntime();
             thrower.throwOther();
             thrower.throwCustomUnChecked();
-        } catch (OtherCustomUncheckedException e) {
-            e.printStackTrace();
         } catch (CustomUncheckedException e) {
+            e.printStackTrace();
+        } catch (OtherCustomUncheckedException e) {
             e.printStackTrace();
         } catch (RuntimeException e) {
             e.printStackTrace();

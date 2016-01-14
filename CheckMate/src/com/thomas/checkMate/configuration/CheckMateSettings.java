@@ -6,19 +6,21 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @State(name = "CheckMateSettings", storages = {@Storage(id = "CheckMateSettings", file = StoragePathMacros.APP_CONFIG + "/CheckMate.xml")})
 public class CheckMateSettings implements ApplicationComponent, PersistentStateComponent<CheckMateSettings> {
     //These fields have to be public for inclusion in Persistent State.
-    public boolean includeJavaSrc = false;
     public boolean includeJavaDocs = true;
     public boolean includeErrors = false;
+    public boolean includeInheritors = false;
+    public List<String> srcWhiteList = new ArrayList<>();
+    public List<String> excBlackList = new ArrayList<>();
+    private static CheckMateSettings instance;
 
-    public boolean getIncludeJavaSrc() {
-        return includeJavaSrc;
-    }
-
-    public void setIncludeJavaSrc(boolean isJavaSource) {
-        this.includeJavaSrc = isJavaSource;
+    public CheckMateSettings() {
+        srcWhiteList.add("javax.persistence");
     }
 
     public boolean getIncludeJavaDocs() {
@@ -33,12 +35,43 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
         return includeErrors;
     }
 
+    public boolean getIncludeInheritors() {
+        return includeInheritors;
+    }
+
+    public List<String> getSrcWhiteList() {
+        return srcWhiteList;
+    }
+
+    public void setSrcWhiteList(List<String> srcWhiteList) {
+        this.srcWhiteList = srcWhiteList;
+    }
+
+    public void setIncludeInheritors(boolean includeInheritors) {
+        this.includeInheritors = includeInheritors;
+    }
+
     public void setIncludeErrors(boolean includeErrors) {
         this.includeErrors = includeErrors;
     }
 
+    public List<String> getExcBlackList() {
+        return excBlackList;
+    }
+
+    public void setExcBlackList(List<String> excBlackList) {
+        this.excBlackList = excBlackList;
+    }
+
     public static CheckMateSettings getInstance() {
-        return ApplicationManager.getApplication().getComponent(CheckMateSettings.class);
+        if (instance == null) {
+            synchronized (CheckMateSettings.class) {
+                if (instance == null) {
+                    instance = ApplicationManager.getApplication().getComponent(CheckMateSettings.class);
+                }
+            }
+        }
+        return instance;
     }
 
     @Override
