@@ -1,5 +1,6 @@
 # CheckMate
 <b>Intellij Plugin to discover unchecked exceptions that might be thrown in the methods you selected.</b>  
+  
 Option to create/change a try catch statement for the selcted exceptions.  
 Option to include @throws clauses from JavaDocs in search results.  
 Option to include Errors in search results.  
