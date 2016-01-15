@@ -2,12 +2,17 @@
     <id>com.thomas.checkMate</id>
     <name>CheckMate</name>
     <version>1.0</version>
-    <vendor email="goristhomas@hotmail.com">Thomas Goris</vendor>
+    <vendor email="checkmateplugin@hotmail.com">Thomas Goris</vendor>
 
     <description><![CDATA[
-      Discover uncaught unchecked exceptions for one or more selected statements.<br>
-      Generate or update a try catch statement based on the exceptions you selected.<br>
-      Inspect responsible methods and corresponding throw statements.
+<b>Discover unchecked exceptions that might be thrown in the statements you selected.</b><br>
+
+Option to create/change a try catch statement for the selected exceptions.<br>
+Option to include @throws clauses from JavaDocs in search results.<br>
+Option to include Errors in search results.<br>
+Option to search for exceptions through all overrides of an encountered method.<br>
+Option to whitelist parts of the java*, org.xml*, org.omg* sources to search through (they are ignored by default).<br>
+Option to blacklist certain exceptions from search results (i.e. NullPointerException).<br>
     ]]></description>
 
     <change-notes><![CDATA[
@@ -45,7 +50,7 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action id="findUncheckedExceptions" class="com.thomas.checkMate.FindAction" text="Find Unchecked Exceptions"
+        <action id="checkMate" class="com.thomas.checkMate.FindAction" text="Find Unchecked Exceptions"
                 description="Used to discover uncaught unchecked exceptions and add/update a try catch statement based on the selected exceptions">
             <keyboard-shortcut keymap="$default" first-keystroke="alt U"/>
         </action>

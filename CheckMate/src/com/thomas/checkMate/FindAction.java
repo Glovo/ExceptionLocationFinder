@@ -50,11 +50,17 @@ public class FindAction extends AnAction {
         //Get selected discoverers
         List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createSelectedDiscovers(project);
         //Find all uncaught unchecked exceptions in extracted method call expressions with the selected discoverers
-        ComputableExceptionFinder exceptionFinder =
-                new ComputableExceptionFinder(psiMethodCalls, discovererList);
-        Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = ProgressManager.getInstance()
-                .runProcessWithProgressSynchronously(exceptionFinder, "Searching For Unchecked Exceptions", true, project);
-        if (discoveredExceptions.keySet().size() < 1) {
+        ComputableExceptionFinder exceptionFinder = new ComputableExceptionFinder(psiMethodCalls, discovererList);
+        Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions;
+        try {
+            discoveredExceptions = ProgressManager.getInstance()
+                    .runProcessWithProgressSynchronously(exceptionFinder, "Searching For Unchecked Exceptions", true, project);
+        } catch (StackOverflowError | OutOfMemoryError er) {
+            showInformationHint(editor, "Too many statements too process, consider disabling the overriding method search option " +
+                    "and/or removing some java sources from the whitelist");
+            return;
+        }
+        if (discoveredExceptions != null && discoveredExceptions.keySet().size() < 1) {
             showInformationHint(editor, "No uncaught unchecked exceptions found in the selected statements");
             return;
         }
