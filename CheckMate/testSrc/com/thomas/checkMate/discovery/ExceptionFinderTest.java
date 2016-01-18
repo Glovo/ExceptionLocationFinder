@@ -4,7 +4,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiType;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.thomas.checkMate.configuration.CheckMateSettings;
-import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
+import com.thomas.checkMate.discovery.general.Discovery;
 import com.thomas.checkMate.util.TestExceptionFinder;
 
 import java.io.File;
@@ -128,6 +128,22 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         assertEquals(0, findExceptions().keySet().size());
     }
 
+    public void testRepeatedMethodFound() {
+        configure("RepeatedMethodFound.java");
+        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+    }
+
+    public void testInfiniteLoopPrevented() {
+        configure("InfiniteLoopPrevented.java");
+        assertEquals(0, findExceptions().keySet().size());
+    }
+
+    public void testInheritorsFound() {
+        configure("InheritorsFound.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+    }
+
     //TODO: Unimplemented feature
     public void LocalVarInheritorsResolved() {
         configure("LocalVarInheritorsResolved.java");
@@ -142,7 +158,7 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
     }
 
-    private Map<PsiType, Set<DiscoveredExceptionIndicator>> findExceptions() {
+    private Map<PsiType, Set<Discovery>> findExceptions() {
         return TestExceptionFinder.findExceptions(myFixture);
     }
 

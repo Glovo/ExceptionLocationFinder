@@ -3,7 +3,7 @@ package com.thomas.checkMate.presentation.dialog;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiType;
-import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
+import com.thomas.checkMate.discovery.general.Discovery;
 import com.thomas.checkMate.presentation.exception_form.ExceptionForm;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,7 @@ import java.util.Set;
 public class GenerateDialog extends DialogWrapper {
     private ExceptionForm exceptionForm;
 
-    public GenerateDialog(Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions, PsiFile currentFile) {
+    public GenerateDialog(Map<PsiType, Set<Discovery>> discoveredExceptions, PsiFile currentFile) {
         super(currentFile.getProject());
         setTitle("Uncaught Unchecked Exceptions");
         exceptionForm = new ExceptionForm(discoveredExceptions, currentFile);

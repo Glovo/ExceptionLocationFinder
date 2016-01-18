@@ -6,6 +6,6 @@ import base.Thrower;
 public class OverrideFound extends TestBase {
     public void testOverrideFound() {
         super<selection>Thrower.throwRuntime();
-        superThrower.throwCustomUnCheck</selection>ed();
+        superThrower.throwCustomUnChec</selection>ked();
     }
 }
