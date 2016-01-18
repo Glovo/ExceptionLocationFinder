@@ -1,15 +1,15 @@
 package base;
 
 public interface SuperInterface {
-    /**
-     * @throws CustomUncheckedException ;askljfdsljkfdsjkldfsljkdsljksdljk;ads;kljas;jldfkjasf
-     *                                  asfdl;ajsfl;ksj
-     *                                  asdlkfjasdlfj
-     *                                  asdfjaslkdf
-     */
-    public void throwSuperInterface();
+    void throwSuperInterface();
 
-    default void throwDefaultInterface() {
+    default void ignoredDefault() {
         throw new CustomUncheckedException("Default interface unchecked");
     }
+
+    default void usedDefault() {
+        throw new CustomUncheckedException("hehe");
+    }
+
+
 }
