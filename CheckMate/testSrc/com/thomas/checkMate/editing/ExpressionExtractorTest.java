@@ -73,6 +73,11 @@ public class ExpressionExtractorTest extends LightCodeInsightFixtureTestCase {
         assertCorrectExpressionExtracted(extractor.extract(), CONSTRUCTOR_EXPRESSION);
     }
 
+    public void testMethodIdentifierExtracted() {
+        configure("MethodIdentifierExtracted.java");
+        assertCorrectExpressionExtracted(extractor.extract(), CUSTOM_UNCHECKED_EXPRESSION, OTHER_EXPRESSION);
+    }
+
     private void configure(String testFile) {
         myFixture.configureByFile(testFile);
         extractor = TestExtractorFactory.createExpressionExtractor(myFixture);

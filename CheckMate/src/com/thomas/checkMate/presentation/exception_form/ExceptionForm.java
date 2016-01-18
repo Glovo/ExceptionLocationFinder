@@ -39,7 +39,7 @@ public class ExceptionForm {
     private JList<PsiType> createExceptionList(Set<PsiType> exceptionTypes) {
         JList<PsiType> exceptionList = new JList<>();
         DefaultListModel<PsiType> listModel = new DefaultListModel<>();
-        exceptionTypes.stream().forEach(listModel::addElement);
+        exceptionTypes.stream().sorted((e1, e2) -> e1.getCanonicalText().compareTo(e2.getCanonicalText())).forEach(listModel::addElement);
         exceptionList.setModel(listModel);
         exceptionList.addListSelectionListener(e -> {
             populateMethodListForSelectedExceptionWithIndex(exceptionList.getLeadSelectionIndex());
