@@ -2,7 +2,7 @@ package base;
 
 import base.other_package.OtherCustomUncheckedException;
 
-public class Thrower extends SuperThrower implements SuperInterface {
+public class Thrower extends SuperThrower implements SuperInterface, IgnoredSuperInterface {
 
     public Thrower() {
         throw new RuntimeException("ConstructorRuntime");
@@ -85,7 +85,7 @@ public class Thrower extends SuperThrower implements SuperInterface {
 
     @Override
     public void throwSuperInterface() {
-        //nothing
+        throw new CustomUncheckedException("hehe");
     }
 
     public void superThrow() {
@@ -99,5 +99,10 @@ public class Thrower extends SuperThrower implements SuperInterface {
 
     public void generateStackOverflowOther() {
         generateStackOverflow();
+    }
+
+    @Override
+    public void ignoredDefault() {
+        throw new OtherCustomUncheckedException("hehe");
     }
 }

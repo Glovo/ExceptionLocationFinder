@@ -46,7 +46,6 @@ public class Main {
         thrower.throwCustomUnChecked();
         if (thrower.getBooleanWithRuntimeExceptions()) {
             thrower.throwCustomUnChecked();
-            thrower.throwAssertion();
         }
         int i = thrower.getIntWithRuntimeException();
         try {
