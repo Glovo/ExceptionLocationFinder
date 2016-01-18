@@ -3,6 +3,7 @@ package com.thomas.checkMate.editing;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.exceptionCases.AbstractExceptionCase;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.thomas.checkMate.discovery.ExceptionFinderTest;
 
@@ -76,6 +77,30 @@ public class ExpressionExtractorTest extends LightCodeInsightFixtureTestCase {
     public void testMethodIdentifierExtracted() {
         configure("MethodIdentifierExtracted.java");
         assertCorrectExpressionExtracted(extractor.extract(), CUSTOM_UNCHECKED_EXPRESSION, OTHER_EXPRESSION);
+    }
+
+    public void testMultipleMethodIdentifier() throws Throwable {
+        configure("MultipleMethodIdentifier.java");
+        expectMultipleMethodException();
+    }
+
+    public void testMultipleMethodStatements() throws Throwable {
+        configure("MultipleMethodStatements.java");
+        expectMultipleMethodException();
+    }
+
+    private void expectMultipleMethodException() throws Throwable {
+        assertException(new AbstractExceptionCase() {
+            @Override
+            public Class getExpectedExceptionClass() {
+                return MultipleMethodException.class;
+            }
+
+            @Override
+            public void tryClosure() throws Throwable {
+                extractor.extract();
+            }
+        });
     }
 
     private void configure(String testFile) {

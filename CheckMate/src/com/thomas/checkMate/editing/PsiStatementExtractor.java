@@ -15,6 +15,7 @@ public class PsiStatementExtractor {
     private final int startOffset;
     private final int endOffset;
     private final ScopeTracker<PsiStatement> scopeTracker;
+    private PsiMethod extractionMethod;
 
     public PsiStatementExtractor(PsiFile psiFile, int startOffset, int endOffset) {
         this.psiFile = psiFile;
@@ -23,20 +24,35 @@ public class PsiStatementExtractor {
         this.scopeTracker = new ScopeTracker<>(PsiStatement.class);
     }
 
-    public List<PsiStatement> extract() {
+    public List<PsiStatement> extract() throws MultipleMethodException {
         List<PsiStatement> selectedStatements = new ArrayList<>();
+        boolean methodFound = false;
         for (int i = startOffset; i <= endOffset; i++) {
             PsiElement psiElement = psiFile.findElementAt(i);
-            if (psiElement != null) {
+            checkMultiple(psiElement);
+            if (!methodFound && psiElement != null) {
                 PsiElement parent = psiElement.getParent();
                 if (parent != null && parent instanceof PsiMethod) {
-                    return getMethodStatements(parent);
+                    selectedStatements = getMethodStatements(parent);
+                    methodFound = true;
+                } else {
+                    PsiStatement psiStatement = PsiTreeUtil.getParentOfType(psiElement, PsiStatement.class);
+                    addToStatements(psiStatement, selectedStatements);
                 }
-                PsiStatement psiStatement = PsiTreeUtil.getParentOfType(psiElement, PsiStatement.class);
-                addToStatements(psiStatement, selectedStatements);
             }
         }
         return selectedStatements;
+    }
+
+    private void checkMultiple(PsiElement psiElement) throws MultipleMethodException {
+        PsiMethod currentMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
+        if (extractionMethod == null) {
+            extractionMethod = currentMethod;
+        } else {
+            if (!extractionMethod.equals(currentMethod)) {
+                throw new MultipleMethodException("Can't extract statements from multiple methods");
+            }
+        }
     }
 
     private List<PsiStatement> getMethodStatements(PsiElement psiMethod) {

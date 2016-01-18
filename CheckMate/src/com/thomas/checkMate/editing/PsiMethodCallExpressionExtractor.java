@@ -20,7 +20,7 @@ public class PsiMethodCallExpressionExtractor {
         this.psiStatementExtractor = psiStatementExtractor;
     }
 
-    public Set<PsiCallExpression> extract() {
+    public Set<PsiCallExpression> extract() throws MultipleMethodException {
         Set<PsiCallExpression> selectedExpressions = new HashSet<>();
         psiStatementExtractor.extract().stream().forEach(s -> {
             Collection<PsiCallExpression> psiCallExpressions = PsiTreeUtil.findChildrenOfType(s, PsiCallExpression.class);
