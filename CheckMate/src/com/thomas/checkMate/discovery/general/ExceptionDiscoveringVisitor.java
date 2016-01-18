@@ -12,12 +12,12 @@ import com.thomas.checkMate.utilities.WhiteListUtil;
 import java.util.*;
 
 public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
+    private final CheckMateSettings checkMateSettings;
     private Map<PsiType, Set<Discovery>> discoveredExceptions = new HashMap<>();
     private Map<PsiClass, Collection<PsiClass>> inheritorCache = new HashMap<>();
     private MethodTracker methodTracker = new MethodTracker();
     private TryStatementTracker tryStatementTracker;
     private List<ExceptionIndicatorDiscoverer> discovererList;
-    private final CheckMateSettings checkMateSettings;
 
     public ExceptionDiscoveringVisitor(PsiElement elementToVisit, List<ExceptionIndicatorDiscoverer> discovererList) {
         this.checkMateSettings = CheckMateSettings.getInstance();

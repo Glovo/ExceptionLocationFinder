@@ -10,18 +10,15 @@ import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.ExceptionTypeResolver;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
+    private static final Logger logger = Logger.getLogger(ExceptionIndicatorDiscoverer.class.getName());
+    private final CheckMateSettings checkMateSettings = CheckMateSettings.getInstance();
     private ExceptionTypeResolver<T> exceptionTypeResolver;
-//    private TryStatementTracker tryStatementTracker;
+    //    private TryStatementTracker tryStatementTracker;
     private UncheckedValidator uncheckedValidator;
     private Class<T> elementClass;
-    private final CheckMateSettings checkMateSettings = CheckMateSettings.getInstance();
-    private static final Logger logger = Logger.getLogger(ExceptionIndicatorDiscoverer.class.getName());
 
     public ExceptionIndicatorDiscoverer(ExceptionTypeResolver<T> exceptionTypeResolver, Class<T> clazz) {
         this.exceptionTypeResolver = exceptionTypeResolver;

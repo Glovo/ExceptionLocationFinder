@@ -12,11 +12,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ExpressionExtractorTest extends LightCodeInsightFixtureTestCase {
-    private PsiMethodCallExpressionExtractor extractor;
     private static final String CUSTOM_UNCHECKED_EXPRESSION = "thrower.throwCustomUnChecked()";
     private static final String OTHER_EXPRESSION = "thrower.throwOther()";
     private static final String CONSTRUCTOR_EXPRESSION = "new Thrower()";
-
+    private PsiMethodCallExpressionExtractor extractor;
 
     @Override
     protected String getTestDataPath() {

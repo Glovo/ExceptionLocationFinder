@@ -18,6 +18,7 @@ public class GenerateDialog extends DialogWrapper {
     public GenerateDialog(Map<PsiType, Set<Discovery>> discoveredExceptions, PsiFile currentFile) {
         super(currentFile.getProject());
         setTitle("Uncaught Unchecked Exceptions");
+        setOKButtonText("Generate Catch Section");
         exceptionForm = new ExceptionForm(discoveredExceptions, currentFile);
         init();
     }

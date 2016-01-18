@@ -28,7 +28,6 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         return new File(testOutput, "/../../../testData").getPath();
     }
 
-
     public void testCustomFound() {
         configure("BeforeCustomFound.java");
         assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
