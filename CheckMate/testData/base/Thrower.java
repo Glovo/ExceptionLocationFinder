@@ -29,7 +29,7 @@ public class Thrower extends SuperThrower implements SuperInterface, IgnoredSupe
     public void construct() {
         new Thrower();
     }
-    
+
 
     public void tryCatch() {
         try {
@@ -108,12 +108,16 @@ public class Thrower extends SuperThrower implements SuperInterface, IgnoredSupe
         throw new OtherCustomUncheckedException("hehe");
     }
 
-    public void throwRepeated(){
+    public void throwRepeated() {
         try {
             throwCustomUnChecked();
         } catch (RuntimeException e) {
             //nothing
         }
         throwCustomUnChecked();
+    }
+
+    public void throwAssertion() {
+        throw new AssertionError();
     }
 }

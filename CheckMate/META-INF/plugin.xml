@@ -5,7 +5,7 @@
     <vendor email="checkmateplugin@hotmail.com">Thomas Goris</vendor>
 
     <description><![CDATA[
-<b>Discover unchecked exceptions that might be thrown in the statements you selected.</b><br>
+<b>Alt+U to discover unchecked exceptions that might be thrown in the statements you selected.</b><br>
 
 Option to create/change a try catch statement for the selected exceptions.<br>
 Option to include @throws clauses from JavaDocs in search results.<br>
