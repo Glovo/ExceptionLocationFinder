@@ -29,6 +29,14 @@ import java.util.Set;
 
 
 public class FindAction extends AnAction {
+    private final ProgressManager progressManager;
+    private final HintManager hintManager;
+
+    public FindAction() {
+        progressManager = ProgressManager.getInstance();
+        hintManager = HintManager.getInstance();
+    }
+
     public void actionPerformed(AnActionEvent e) {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
@@ -60,7 +68,7 @@ public class FindAction extends AnAction {
         ComputableExceptionFinder exceptionFinder = new ComputableExceptionFinder(psiMethodCalls, discovererList);
         Map<PsiType, Set<Discovery>> discoveredExceptions;
         try {
-            discoveredExceptions = ProgressManager.getInstance()
+            discoveredExceptions = progressManager
                     .runProcessWithProgressSynchronously(exceptionFinder, "Searching For Unchecked Exceptions", true, project);
         } catch (StackOverflowError | OutOfMemoryError er) {
             showInformationHint(editor, "Too many statements too process, consider disabling the overriding method search option " +
@@ -98,6 +106,6 @@ public class FindAction extends AnAction {
     }
 
     private void showInformationHint(Editor editor, String hint) {
-        HintManager.getInstance().showInformationHint(editor, hint);
+        hintManager.showInformationHint(editor, hint);
     }
 }
