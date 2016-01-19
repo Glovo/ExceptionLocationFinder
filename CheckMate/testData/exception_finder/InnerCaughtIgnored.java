@@ -1,6 +1,5 @@
-package tests;
+package exception_finder;
 
-import base.CustomUncheckedException;
 import base.TestBase;
 
 public class InnerCaughtIgnored extends TestBase {

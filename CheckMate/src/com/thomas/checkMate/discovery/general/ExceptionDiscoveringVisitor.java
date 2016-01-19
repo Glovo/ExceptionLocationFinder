@@ -6,6 +6,7 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
+import com.thomas.checkMate.resolving.OverridingMethodResolver;
 import com.thomas.checkMate.utilities.DiscoveryMapUtil;
 import com.thomas.checkMate.utilities.WhiteListUtil;
 
@@ -63,13 +64,17 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     public void visitCallExpression(PsiCallExpression callExpression) {
         PsiMethod psiMethod = callExpression.resolveMethod();
         if (psiMethod != null) {
-            visitMethod(psiMethod);
+            if (checkMateSettings.getIncludeInheritors()) {
+                visitMethod(psiMethod, OverridingMethodResolver.resolve(callExpression, psiMethod));
+            } else {
+                visitMethod(psiMethod, null);
+            }
         }
         super.visitCallExpression(callExpression);
     }
 
 
-    public void visitMethod(PsiMethod method) {
+    public void visitMethod(PsiMethod method, List<PsiMethod> overridingMethods) {
         if (methodTracker.alreadyOpened(method)) {
             return;
         }
@@ -84,8 +89,8 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
                 visitMethod(mirror);
             } else {
                 super.visitMethod(method);
-                if (checkMateSettings.getIncludeInheritors()) {
-                    visitInheritors(method);
+                if (overridingMethods != null) {
+                    overridingMethods.forEach(om -> visitMethod(om, null));
                 }
             }
             methodTracker.closeMethod(method);

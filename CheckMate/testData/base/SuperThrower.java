@@ -1,8 +1,6 @@
 package base;
 
-import base.TestBase;
-
-public class SuperThrower extends TestBase {
+public class SuperThrower {
     public void superThrow() {
         throw new CustomUncheckedException("SuperThrow");
     }

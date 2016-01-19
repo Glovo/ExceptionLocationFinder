@@ -9,6 +9,9 @@ public class VariableResolver {
             return resolveVariable((PsiMethodCallExpression) expression);
         if (expression instanceof PsiNewExpression)
             return resolveVariable((PsiNewExpression) expression);
+        if (expression instanceof PsiReferenceExpression) {
+            return resolveVariable((PsiReferenceExpression) expression);
+        }
         return null;
     }
 
@@ -18,14 +21,18 @@ public class VariableResolver {
         if (qualifier != null) {
             PsiReference reference = qualifier.getReference();
             if (reference != null) {
-                resolveIfReference(reference);
+                return resolveIfReference(reference);
             }
         }
         return null;
     }
 
     public static PsiVariable resolveVariable(PsiNewExpression newExpression) {
-        return ResolveVariableUtil.resolveVariable(null, null, null);
+        return resolveIfReference(newExpression.getReference());
+    }
+
+    public static PsiVariable resolveVariable(PsiReferenceExpression referenceExpression) {
+        return resolveIfReference(referenceExpression);
     }
 
     private static PsiVariable resolveIfReference(PsiReference reference) {

@@ -1,7 +1,6 @@
-package tests;
+package exception_finder;
 
 import base.TestBase;
-import base.Thrower;
 
 public class ConstructorFound extends TestBase {
     public void testConstructor() {

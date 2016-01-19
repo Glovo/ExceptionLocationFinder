@@ -17,10 +17,8 @@ import java.util.stream.Collectors;
 public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     private static final String CUSTOM_UNCHECKED = "base.CustomUncheckedException";
     private static final String OTHER_UNCHECKED = "base.other_package.OtherCustomUncheckedException";
-    private static final String INDIRECT_UNCHECKED = "base.IndirectUncheckedException";
     private static final String RUNTIME = "RuntimeException";
     private static final String TEST_FILE_DIR = "exception_finder/";
-
 
     @Override
     protected String getTestDataPath() {
@@ -29,7 +27,7 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testCustomFound() {
-        configure("BeforeCustomFound.java");
+        configure("CustomFound.java");
         assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
     }
 
@@ -115,12 +113,6 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
     }
 
-    public void testOverrideFound() {
-        configure("OverrideFound.java");
-        CheckMateSettings.getInstance().setIncludeInheritors(true);
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, RUNTIME);
-    }
-
     public void testOverrideIgnoredWhenSet() {
         configure("OverrideFound.java");
         CheckMateSettings.getInstance().setIncludeInheritors(false);
@@ -137,24 +129,34 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         assertEquals(0, findExceptions().keySet().size());
     }
 
-    public void testInheritorsFound() {
-        configure("InheritorsFound.java");
-        CheckMateSettings.getInstance().setIncludeInheritors(true);
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, OTHER_UNCHECKED);
-    }
-
-    //TODO: Unimplemented feature
-    public void LocalVarInheritorsResolved() {
+    public void testLocalVarInheritorsResolved() {
         configure("LocalVarInheritorsResolved.java");
         CheckMateSettings.getInstance().setIncludeInheritors(true);
         assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
     }
 
-    //TODO: Unimplemented feature
-    public void IndirectLocalVarResolved() {
+    public void testIndirectLocalVarResolved() {
         configure("IndirectLocalVarResolved.java");
         CheckMateSettings.getInstance().setIncludeInheritors(true);
         assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+    }
+
+    public void testMultipleLocalVarInheritorsResolved() {
+        configure("MultipleLocalVarInheritorsResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+    }
+
+    public void testFieldInheritorsResolved() {
+        configure("FieldInheritorsResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+    }
+
+    public void testMultipleFieldInheritorsResolved() {
+        configure("MultipleFieldInheritorsResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     private Map<PsiType, Set<Discovery>> findExceptions() {
@@ -185,5 +187,4 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     private void configure(String... testFiles) {
         ExceptionFinderTestUtil.configure(myFixture, TEST_FILE_DIR, testFiles);
     }
-
 }

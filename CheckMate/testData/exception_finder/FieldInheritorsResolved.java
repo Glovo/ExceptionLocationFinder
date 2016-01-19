@@ -4,9 +4,10 @@ import base.OtherThrower;
 import base.SuperInterface;
 import base.TestBase;
 
-public class LocalVarInheritorsResolved extends TestBase{
+public class FieldInheritorsResolved extends TestBase {
+    private SuperInterface superInterface = new OtherThrower();
+
     public void test() {
-        SuperInterface superInterface = new OtherThrower();
         <caret>superInterface.throwSuperInterface();
     }
 }

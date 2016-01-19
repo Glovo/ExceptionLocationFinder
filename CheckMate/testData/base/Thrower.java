@@ -2,8 +2,6 @@ package base;
 
 import base.other_package.OtherCustomUncheckedException;
 
-import java.lang.RuntimeException;
-
 public class Thrower extends SuperThrower implements SuperInterface, IgnoredSuperInterface {
 
     public Thrower() {
@@ -111,7 +109,7 @@ public class Thrower extends SuperThrower implements SuperInterface, IgnoredSupe
     public void throwRepeated() {
         try {
             throwCustomUnChecked();
-        } catch (RuntimeException e) {
+        } catch (CustomUncheckedException e) {
             //nothing
         }
         throwCustomUnChecked();
