@@ -10,58 +10,55 @@ import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.ExceptionTypeResolver;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
+    private static final Logger logger = Logger.getLogger(ExceptionIndicatorDiscoverer.class.getName());
+    private final CheckMateSettings checkMateSettings = CheckMateSettings.getInstance();
     private ExceptionTypeResolver<T> exceptionTypeResolver;
-    private TryStatementTracker tryStatementTracker;
+    //    private TryStatementTracker tryStatementTracker;
     private UncheckedValidator uncheckedValidator;
     private Class<T> elementClass;
-    private final CheckMateSettings checkMateSettings = CheckMateSettings.getInstance();
-    private static final Logger logger = Logger.getLogger(ExceptionIndicatorDiscoverer.class.getName());
 
     public ExceptionIndicatorDiscoverer(ExceptionTypeResolver<T> exceptionTypeResolver, Class<T> clazz) {
         this.exceptionTypeResolver = exceptionTypeResolver;
         this.elementClass = clazz;
     }
 
-    public Map<PsiType, Set<DiscoveredExceptionIndicator>> addDiscoveries(T psiElement, Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions) {
+    public Discovery discover(T psiElement) {
         if (getElementClass().isAssignableFrom(psiElement.getClass())) {
             if (isIndicator(psiElement)) {
                 PsiType psiType = exceptionTypeResolver.resolve(psiElement);
-                if (psiType != null && !checkMateSettings.getExcBlackList().contains(psiType.getCanonicalText()) && isUnChecked(psiType) && isUncaught(psiType)) {
+                if (psiType != null && !checkMateSettings.getExcBlackList().contains(psiType.getCanonicalText()) && isUnChecked(psiType)) {
                     PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
-                    DiscoveredExceptionIndicator discoveredExceptionIndicator = new DiscoveredExceptionIndicator(psiElement, psiMethod);
+                    Discovery discovery = new Discovery(psiType, psiElement, psiMethod);
                     notifyProgress(psiType.getCanonicalText(), psiMethod);
-                    this.addToMap(psiType, discoveredExceptionIndicator, discoveredExceptions);
+                    return discovery;
                 }
             }
         }
-        return discoveredExceptions;
+        return null;
     }
 
     protected abstract boolean isIndicator(T psiElement);
 
-    private boolean isUncaught(PsiType psiType) {
-        return tryStatementTracker.isNotCaughtByEnclosingCatchSections(psiType);
-    }
+//    private boolean isUncaught(PsiType psiType) {
+//        return tryStatementTracker.isNotCaughtByEnclosingCatchSections(psiType);
+//    }
 
     private boolean isUnChecked(PsiType psiType) {
         return uncheckedValidator.isUncheckedOrError(psiType);
     }
 
-    private void addToMap(PsiType psiType, DiscoveredExceptionIndicator discoveredExceptionIndicator, Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions) {
-        if (discoveredExceptions.containsKey(psiType)) {
-            discoveredExceptions.get(psiType).add(discoveredExceptionIndicator);
-        } else {
-            Set<DiscoveredExceptionIndicator> discoveredThrowStatements = new HashSet<>();
-            discoveredThrowStatements.add(discoveredExceptionIndicator);
-            discoveredExceptions.put(psiType, discoveredThrowStatements);
-        }
-    }
+//    private void addToMap(PsiType psiType, Discovery discovery, Map<PsiType, Set<Discovery>> discoveredExceptions) {
+//        if (discoveredExceptions.containsKey(psiType)) {
+//            discoveredExceptions.get(psiType).add(discovery);
+//        } else {
+//            Set<Discovery> discoveredThrowStatements = new HashSet<>();
+//            discoveredThrowStatements.add(discovery);
+//            discoveredExceptions.put(psiType, discoveredThrowStatements);
+//        }
+//    }
 
     private void notifyProgress(String exceptionName, PsiMethod encapsulatingMethod) {
         String exceptionFound = String.format("%s in %s", exceptionName, encapsulatingMethod.getName());
@@ -72,9 +69,9 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
         logger.info(exceptionFound);
     }
 
-    public void setTryStatementTracker(TryStatementTracker tryStatementTracker) {
-        this.tryStatementTracker = tryStatementTracker;
-    }
+//    public void setTryStatementTracker(TryStatementTracker tryStatementTracker) {
+//        this.tryStatementTracker = tryStatementTracker;
+//    }
 
     public void setUncheckedValidator(UncheckedValidator uncheckedValidator) {
         this.uncheckedValidator = uncheckedValidator;

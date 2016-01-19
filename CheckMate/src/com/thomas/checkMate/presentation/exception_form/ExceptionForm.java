@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiType;
 import com.intellij.ui.JBSplitter;
-import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
+import com.thomas.checkMate.discovery.general.Discovery;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
@@ -18,20 +18,20 @@ import java.util.Set;
 
 public class ExceptionForm {
     private JList<PsiType> exception_list;
-    private JList<DiscoveredExceptionIndicator> method_list;
-    private Map<PsiType, Set<DiscoveredExceptionIndicator>> exceptionMap;
+    private JList<Discovery> method_list;
+    private Map<PsiType, Set<Discovery>> exceptionMap;
     private JBSplitter splitter;
     private PsiFile currentFile;
     private PsiElement currentActive;
 
-    public ExceptionForm(Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptionMap, PsiFile currentFile) {
+    public ExceptionForm(Map<PsiType, Set<Discovery>> discoveredExceptionMap, PsiFile currentFile) {
         this.exceptionMap = discoveredExceptionMap;
         this.currentFile = currentFile;
         currentActive = currentFile;
         exception_list = createExceptionList(discoveredExceptionMap.keySet());
         method_list = createMethodList();
         LabeledComponent decoratedExceptionList = new DefaultListDecorator<PsiType>().decorate(exception_list, "Select exceptions to include");
-        LabeledComponent decoratedMethodList = new DefaultListDecorator<DiscoveredExceptionIndicator>().decorate(method_list, "Inspect methods that throw this exception");
+        LabeledComponent decoratedMethodList = new DefaultListDecorator<Discovery>().decorate(method_list, "Inspect methods that throw this exception");
         exception_list.setSelectedIndex(0);
         splitter = createSplitter(decoratedExceptionList, decoratedMethodList);
     }
@@ -39,7 +39,7 @@ public class ExceptionForm {
     private JList<PsiType> createExceptionList(Set<PsiType> exceptionTypes) {
         JList<PsiType> exceptionList = new JList<>();
         DefaultListModel<PsiType> listModel = new DefaultListModel<>();
-        exceptionTypes.stream().forEach(listModel::addElement);
+        exceptionTypes.stream().sorted((e1, e2) -> e1.getCanonicalText().compareTo(e2.getCanonicalText())).forEach(listModel::addElement);
         exceptionList.setModel(listModel);
         exceptionList.addListSelectionListener(e -> {
             populateMethodListForSelectedExceptionWithIndex(exceptionList.getLeadSelectionIndex());
@@ -49,8 +49,8 @@ public class ExceptionForm {
         return exceptionList;
     }
 
-    private JList<DiscoveredExceptionIndicator> createMethodList() {
-        JList<DiscoveredExceptionIndicator> methodList = new JList<>();
+    private JList<Discovery> createMethodList() {
+        JList<Discovery> methodList = new JList<>();
         methodList.setCellRenderer(new ExceptionIndicatorCellRenderer());
         return methodList;
     }
@@ -66,13 +66,13 @@ public class ExceptionForm {
     private void populateMethodListForSelectedExceptionWithIndex(int index) {
         if (index >= 0) {
             PsiType psiType = exception_list.getModel().getElementAt(index);
-            DefaultListModel<DiscoveredExceptionIndicator> methodListModel = new DefaultListModel<>();
+            DefaultListModel<Discovery> methodListModel = new DefaultListModel<>();
             exceptionMap.get(psiType).forEach(methodListModel::addElement);
             method_list.setModel(methodListModel);
             method_list.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    DiscoveredExceptionIndicator indicator = method_list.getSelectedValue();
+                    Discovery indicator = method_list.getSelectedValue();
                     if (indicator != null) {
                         if (!e.isPopupTrigger()) {
                             if (!(e.getModifiersEx() == InputEvent.SHIFT_DOWN_MASK)) {

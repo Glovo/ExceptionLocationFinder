@@ -3,7 +3,7 @@ package com.thomas.checkMate.discovery;
 import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiType;
-import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
+import com.thomas.checkMate.discovery.general.Discovery;
 import com.thomas.checkMate.discovery.general.ExceptionDiscoveringVisitor;
 import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
 
@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class ExceptionFinder {
-    public static Map<PsiType, Set<DiscoveredExceptionIndicator>> find(Set<PsiCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList) {
-        Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions = new HashMap<>();
+    public static Map<PsiType, Set<Discovery>> find(Set<PsiCallExpression> expressions, List<ExceptionIndicatorDiscoverer> discovererList) {
+        Map<PsiType, Set<Discovery>> discoveredExceptions = new HashMap<>();
         ExceptionDiscoveringVisitor exceptionDiscoveringVisitor;
         for (PsiExpression expression : expressions) {
             exceptionDiscoveringVisitor = new ExceptionDiscoveringVisitor(expression, discovererList);
@@ -24,8 +24,8 @@ public class ExceptionFinder {
         return discoveredExceptions;
     }
 
-    private static void mergeResult(Map<PsiType, Set<DiscoveredExceptionIndicator>> firstMap, Map<PsiType, Set<DiscoveredExceptionIndicator>> secondMap) {
-        for (Map.Entry<PsiType, Set<DiscoveredExceptionIndicator>> entry : secondMap.entrySet()) {
+    private static void mergeResult(Map<PsiType, Set<Discovery>> firstMap, Map<PsiType, Set<Discovery>> secondMap) {
+        for (Map.Entry<PsiType, Set<Discovery>> entry : secondMap.entrySet()) {
             PsiType type = entry.getKey();
             if (firstMap.containsKey(type)) {
                 firstMap.get(type).addAll(entry.getValue());

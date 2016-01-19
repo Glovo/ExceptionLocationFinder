@@ -3,6 +3,7 @@ package com.thomas.checkMate.editing;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.exceptionCases.AbstractExceptionCase;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.thomas.checkMate.discovery.ExceptionFinderTest;
 
@@ -12,11 +13,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ExpressionExtractorTest extends LightCodeInsightFixtureTestCase {
-    private PsiMethodCallExpressionExtractor extractor;
     private static final String CUSTOM_UNCHECKED_EXPRESSION = "thrower.throwCustomUnChecked()";
     private static final String OTHER_EXPRESSION = "thrower.throwOther()";
     private static final String CONSTRUCTOR_EXPRESSION = "new Thrower()";
-
+    private PsiMethodCallExpressionExtractor extractor;
 
     @Override
     protected String getTestDataPath() {
@@ -72,6 +72,35 @@ public class ExpressionExtractorTest extends LightCodeInsightFixtureTestCase {
     public void testConstructorExtracted() {
         configure("ConstructorExtracted.java");
         assertCorrectExpressionExtracted(extractor.extract(), CONSTRUCTOR_EXPRESSION);
+    }
+
+    public void testMethodIdentifierExtracted() {
+        configure("MethodIdentifierExtracted.java");
+        assertCorrectExpressionExtracted(extractor.extract(), CUSTOM_UNCHECKED_EXPRESSION, OTHER_EXPRESSION);
+    }
+
+    public void testMultipleMethodIdentifier() throws Throwable {
+        configure("MultipleMethodIdentifier.java");
+        expectMultipleMethodException();
+    }
+
+    public void testMultipleMethodStatements() throws Throwable {
+        configure("MultipleMethodStatements.java");
+        expectMultipleMethodException();
+    }
+
+    private void expectMultipleMethodException() throws Throwable {
+        assertException(new AbstractExceptionCase() {
+            @Override
+            public Class getExpectedExceptionClass() {
+                return MultipleMethodException.class;
+            }
+
+            @Override
+            public void tryClosure() throws Throwable {
+                extractor.extract();
+            }
+        });
     }
 
     private void configure(String testFile) {

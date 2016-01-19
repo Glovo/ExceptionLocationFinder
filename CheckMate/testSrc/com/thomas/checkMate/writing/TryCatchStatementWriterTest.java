@@ -46,6 +46,12 @@ public class TryCatchStatementWriterTest extends LightCodeInsightFixtureTestCase
         checkResult("AfterExceptionHierarchyWritten.java");
     }
 
+    public void testExistingWrittenSuper() {
+        configure("BeforeExistingWrittenSuper.java");
+        writeStatement(findExceptionTypes());
+        checkResult("AfterExistingWrittenSuper.java");
+    }
+
     private void configure(String... testFiles) {
         ExceptionFinderTestUtil.configure(myFixture, TEST_FILE_DIR, testFiles);
     }

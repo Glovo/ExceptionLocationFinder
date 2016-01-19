@@ -11,19 +11,30 @@ import java.util.List;
 
 @State(name = "CheckMateSettings", storages = {@Storage(id = "CheckMateSettings", file = StoragePathMacros.APP_CONFIG + "/CheckMate.xml")})
 public class CheckMateSettings implements ApplicationComponent, PersistentStateComponent<CheckMateSettings> {
+    private static CheckMateSettings instance;
     //These fields have to be public for inclusion in Persistent State.
     public boolean includeJavaDocs = true;
     public boolean includeErrors = false;
     public boolean includeInheritors = false;
     public List<String> srcWhiteList = new ArrayList<>();
     public List<String> excBlackList = new ArrayList<>();
-    private static CheckMateSettings instance;
 
     public CheckMateSettings() {
         srcWhiteList.add("javax.persistence");
         excBlackList.add("java.lang.NullPointerException");
         excBlackList.add("java.lang.IllegalArgumentException");
         excBlackList.add("java.lang.IndexOutOfBoundsException");
+    }
+
+    public static CheckMateSettings getInstance() {
+        if (instance == null) {
+            synchronized (CheckMateSettings.class) {
+                if (instance == null) {
+                    instance = ApplicationManager.getApplication().getComponent(CheckMateSettings.class);
+                }
+            }
+        }
+        return instance;
     }
 
     public boolean getIncludeJavaDocs() {
@@ -38,8 +49,16 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
         return includeErrors;
     }
 
+    public void setIncludeErrors(boolean includeErrors) {
+        this.includeErrors = includeErrors;
+    }
+
     public boolean getIncludeInheritors() {
         return includeInheritors;
+    }
+
+    public void setIncludeInheritors(boolean includeInheritors) {
+        this.includeInheritors = includeInheritors;
     }
 
     public List<String> getSrcWhiteList() {
@@ -50,31 +69,12 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
         this.srcWhiteList = srcWhiteList;
     }
 
-    public void setIncludeInheritors(boolean includeInheritors) {
-        this.includeInheritors = includeInheritors;
-    }
-
-    public void setIncludeErrors(boolean includeErrors) {
-        this.includeErrors = includeErrors;
-    }
-
     public List<String> getExcBlackList() {
         return excBlackList;
     }
 
     public void setExcBlackList(List<String> excBlackList) {
         this.excBlackList = excBlackList;
-    }
-
-    public static CheckMateSettings getInstance() {
-        if (instance == null) {
-            synchronized (CheckMateSettings.class) {
-                if (instance == null) {
-                    instance = ApplicationManager.getApplication().getComponent(CheckMateSettings.class);
-                }
-            }
-        }
-        return instance;
     }
 
     @Override

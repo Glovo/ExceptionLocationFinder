@@ -3,7 +3,6 @@ package com.thomas.checkMate.discovery;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 
 public class ExceptionFinderTestUtil {
-    private static final String BASE_FILE_DIR = "base/";
     public static final String[] COMMON_TEST_FILES = new String[]{
             "other_package/OtherCustomUncheckedException.java",
             "BridgeSuper.java",
@@ -16,6 +15,7 @@ public class ExceptionFinderTestUtil {
             "TestBase.java",
             "Thrower.java"
     };
+    private static final String BASE_FILE_DIR = "base/";
 
     public static void configure(CodeInsightTestFixture fixture, String testFileDir, String... testFiles) {
         int totalLength = COMMON_TEST_FILES.length + testFiles.length;

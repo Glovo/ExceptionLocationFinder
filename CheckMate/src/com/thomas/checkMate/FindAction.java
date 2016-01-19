@@ -15,8 +15,9 @@ import com.intellij.psi.PsiStatement;
 import com.intellij.psi.PsiType;
 import com.thomas.checkMate.discovery.ComputableExceptionFinder;
 import com.thomas.checkMate.discovery.factories.DiscovererFactory;
-import com.thomas.checkMate.discovery.general.DiscoveredExceptionIndicator;
+import com.thomas.checkMate.discovery.general.Discovery;
 import com.thomas.checkMate.discovery.general.ExceptionIndicatorDiscoverer;
+import com.thomas.checkMate.editing.MultipleMethodException;
 import com.thomas.checkMate.editing.PsiMethodCallExpressionExtractor;
 import com.thomas.checkMate.editing.PsiStatementExtractor;
 import com.thomas.checkMate.presentation.dialog.GenerateDialog;
@@ -41,7 +42,13 @@ public class FindAction extends AnAction {
         Caret currentCaret = editor.getCaretModel().getCurrentCaret();
         PsiStatementExtractor statementExtractor = new PsiStatementExtractor(psiFile, currentCaret.getSelectionStart(), currentCaret.getSelectionEnd());
         PsiMethodCallExpressionExtractor methodCallExpressionExtractor = new PsiMethodCallExpressionExtractor(statementExtractor);
-        Set<PsiCallExpression> psiMethodCalls = methodCallExpressionExtractor.extract();
+        Set<PsiCallExpression> psiMethodCalls;
+        try {
+            psiMethodCalls = methodCallExpressionExtractor.extract();
+        } catch (MultipleMethodException mme) {
+            showInformationHint(editor, "Please keep your selection within one method");
+            return;
+        }
         if (psiMethodCalls.size() < 1) {
             showInformationHint(editor, "No expressions found in current selection");
             return;
@@ -51,7 +58,7 @@ public class FindAction extends AnAction {
         List<ExceptionIndicatorDiscoverer> discovererList = DiscovererFactory.createSelectedDiscovers(project);
         //Find all uncaught unchecked exceptions in extracted method call expressions with the selected discoverers
         ComputableExceptionFinder exceptionFinder = new ComputableExceptionFinder(psiMethodCalls, discovererList);
-        Map<PsiType, Set<DiscoveredExceptionIndicator>> discoveredExceptions;
+        Map<PsiType, Set<Discovery>> discoveredExceptions;
         try {
             discoveredExceptions = ProgressManager.getInstance()
                     .runProcessWithProgressSynchronously(exceptionFinder, "Searching For Unchecked Exceptions", true, project);

@@ -8,20 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsForm extends JPanel {
-    private JCheckBox javaDocsCBox;
     private static final String INCLUDE_JAVA_DOCS = "Include exceptions found in @throws JavaDoc clauses";
-    private JCheckBox errorsCBox;
     private static final String INCLUDE_ERRORS = "Include errors in search results";
-    private JCheckBox inheritorsCBox;
     private static final String INCLUDE_INHERITORS = "Search through all overrides of encountered methods (may include false positives and increase search times)";
-    private DefaultListModel<String> srcWhiteListModel;
     private static final String SRC_WHITELIST = "Sources whitelist (by default all classes from java*, org.xml* and org.omg* are ignored)";
     private static final String SRC_WHITELIST_DETAIL = "Include all classes with a FQN that starts with: ";
     private static final String SRC_WHITELIST_TITLE = "Add to whitelist";
-    private DefaultListModel<String> excBlackListModel;
     private static final String EXC_BLACKLIST = "Exception blacklist (exclude the following exceptions from search results)";
     private static final String EXC_BLACKLIST_DETAIL = "FQN of exception to ignore: ";
     private static final String EXC_BLACKLIST_TITLE = "Add to blacklist";
+    private JCheckBox javaDocsCBox;
+    private JCheckBox errorsCBox;
+    private JCheckBox inheritorsCBox;
+    private DefaultListModel<String> srcWhiteListModel;
+    private DefaultListModel<String> excBlackListModel;
 
 
     public SettingsForm(CheckMateSettings settings) {

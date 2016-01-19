@@ -17,10 +17,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DocTagTypeResolver implements ExceptionTypeResolver<PsiDocTag> {
+    private static final Logger logger = Logger.getLogger(DocTagTypeResolver.class.getName());
     private final PsiElementFactory elementFactory;
     private final Project project;
     private final PsiManager manager;
-    private static final Logger logger = Logger.getLogger(DocTagTypeResolver.class.getName());
 
     public DocTagTypeResolver(PsiElementFactory elementFactory, Project project) {
         this.elementFactory = elementFactory;
