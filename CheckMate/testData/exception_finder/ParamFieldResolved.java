@@ -3,15 +3,15 @@ package exception_finder;
 import base.OtherThrower;
 import base.SuperInterface;
 import base.TestBase;
-import base.Thrower;
 
-public class MultipleFieldInheritorsResolved extends TestBase {
+public class ParamFieldResolved extends TestBase{
     private SuperInterface superInterface = new OtherThrower();
 
-    public void test(boolean random) {
-        if(random) {
-            superInterface = new Thrower();
-        }
+    public void otherTest() {
+        test(superInterface);
+    }
+
+    public void test(SuperInterface superInterface) {
         <caret>superInterface.throwSuperInterface();
     }
 }

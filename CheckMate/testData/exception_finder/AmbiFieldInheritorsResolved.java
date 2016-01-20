@@ -5,12 +5,11 @@ import base.SuperInterface;
 import base.TestBase;
 import base.Thrower;
 
-public class MultipleLocalVarInheritorsResolved extends TestBase {
+public class AmbiFieldInheritorsResolved extends TestBase {
+    private SuperInterface superInterface = new OtherThrower();
+
     public void test(boolean random) {
-        SuperInterface superInterface = null;
-        if (random)
-            superInterface = new OtherThrower();
-        else {
+        if(random) {
             superInterface = new Thrower();
         }
         <caret>superInterface.throwSuperInterface();

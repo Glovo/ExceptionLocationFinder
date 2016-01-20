@@ -6,8 +6,12 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.Discovery;
 import com.thomas.checkMate.util.TestExceptionFinder;
+import com.thomas.checkMate.util.WinTempFileVisitor;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +23,7 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     private static final String OTHER_UNCHECKED = "base.other_package.OtherCustomUncheckedException";
     private static final String RUNTIME = "RuntimeException";
     private static final String TEST_FILE_DIR = "exception_finder/";
+    private static boolean cleaned;
 
     @Override
     protected String getTestDataPath() {
@@ -26,14 +31,28 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
         return new File(testOutput, "/../../../testData").getPath();
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (!cleaned) {
+            //Clean temp files to prevent random stub index error.
+            //TODO: find out cause of stub index error
+            if (System.getProperty("os.name").toUpperCase().contains("WIN")) {
+                Path path = Paths.get(System.getenv("AppData"), "../Local/Temp");
+                Files.walkFileTree(path, new WinTempFileVisitor());
+            }
+            cleaned = true;
+        }
+    }
+
     public void testCustomFound() {
         configure("CustomFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+        expect(CUSTOM_UNCHECKED);
     }
 
     public void testRuntimeFound() {
         configure("RuntimeFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), RUNTIME);
+        expect(RUNTIME);
     }
 
     public void testCheckedIgnored() {
@@ -43,17 +62,17 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
 
     public void testSuperFound() {
         configure("SuperFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+        expect(CUSTOM_UNCHECKED);
     }
 
     public void testInterfaceDefaultFound() {
         configure("InterfaceDefaultFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+        expect(CUSTOM_UNCHECKED);
     }
 
     public void testChainingFound() {
         configure("ChainingFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, RUNTIME);
+        expect(CUSTOM_UNCHECKED, RUNTIME);
     }
 
     public void testInnerCaughtIgnored() {
@@ -78,28 +97,28 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
 
     public void testInnerUncaughtFound() {
         configure("InnerUncaughtFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+        expect(OTHER_UNCHECKED);
     }
 
     public void testOuterUncaughtFound() {
         configure("OuterUncaughtFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+        expect(OTHER_UNCHECKED);
     }
 
     public void testInnerToOuterUncaughtFound() {
         configure("InnerToOuterUncaughtFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+        expect(OTHER_UNCHECKED);
     }
 
     public void testConstructorFound() {
         configure("ConstructorFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), RUNTIME);
+        expect(RUNTIME);
     }
 
     public void testThrowDocFound() {
         configure("ThrowDocFound.java");
         CheckMateSettings.getInstance().setIncludeJavaDocs(true);
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+        expect(CUSTOM_UNCHECKED);
     }
 
     public void testDocsIgnoredWhenSet() {
@@ -110,7 +129,7 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
 
     public void testOverriddenIgnored() {
         configure("OverriddenIgnored.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+        expect(OTHER_UNCHECKED);
     }
 
     public void testOverrideIgnoredWhenSet() {
@@ -121,7 +140,7 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
 
     public void testRepeatedMethodFound() {
         configure("RepeatedMethodFound.java");
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED);
+        expect(CUSTOM_UNCHECKED);
     }
 
     public void testInfiniteLoopPrevented() {
@@ -132,38 +151,106 @@ public class ExceptionFinderTest extends LightCodeInsightFixtureTestCase {
     public void testLocalVarInheritorsResolved() {
         configure("LocalVarInheritorsResolved.java");
         CheckMateSettings.getInstance().setIncludeInheritors(true);
-        assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+        expect(OTHER_UNCHECKED);
     }
 
     public void testIndirectLocalVarResolved() {
         configure("IndirectLocalVarResolved.java");
         CheckMateSettings.getInstance().setIncludeInheritors(true);
-        assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+        expect(OTHER_UNCHECKED);
     }
 
-    public void testMultipleLocalVarInheritorsResolved() {
-        configure("MultipleLocalVarInheritorsResolved.java");
+    public void testAmbiLocalVarInheritorsResolved() {
+        configure("AmbiLocalVarResolved.java");
         CheckMateSettings.getInstance().setIncludeInheritors(true);
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+        expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     public void testFieldInheritorsResolved() {
         configure("FieldInheritorsResolved.java");
         CheckMateSettings.getInstance().setIncludeInheritors(true);
-        assertCorrectExceptionsFound(findExceptions().keySet(), OTHER_UNCHECKED);
+        expect(OTHER_UNCHECKED);
     }
 
-    public void testMultipleFieldInheritorsResolved() {
-        configure("MultipleFieldInheritorsResolved.java");
+    public void testAmbiFieldInheritorsResolved() {
+        configure("AmbiFieldInheritorsResolved.java");
         CheckMateSettings.getInstance().setIncludeInheritors(true);
-        assertCorrectExceptionsFound(findExceptions().keySet(), CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+        expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+    }
+
+    public void testParamResolved() {
+        configure("ParamResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(OTHER_UNCHECKED);
+    }
+
+    public void testMultiParamResolved() {
+        configure("MultiParamResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(OTHER_UNCHECKED);
+    }
+
+    public void testAmbiParamResolved() {
+        configure("AmbiParamResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+    }
+
+    public void testParamLocalResolved() {
+        configure("ParamLocalResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(OTHER_UNCHECKED);
+    }
+
+    public void testParamAmbiLocalResolved() {
+        configure("ParamAmbiLocalResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+    }
+
+    public void testMultiParamLocalResolved() {
+        configure("MultiParamLocalResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(OTHER_UNCHECKED);
+    }
+
+    public void testMultiParamAmbiLocalResolved() {
+        configure("MultiParamAmbiLocalResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+    }
+
+
+    public void testParamFieldResolved() {
+        configure("ParamFieldResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(OTHER_UNCHECKED);
+    }
+
+    public void testParamAmbiFieldResolved() {
+        configure("ParamAmbiFieldResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+    }
+
+    public void testMultiParamFieldResolved() {
+        configure("MultiParamFieldResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(OTHER_UNCHECKED);
+    }
+
+    public void testMultiParamAmbiFieldResolved() {
+        configure("MultiParamAmbiFieldResolved.java");
+        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     private Map<PsiType, Set<Discovery>> findExceptions() {
         return TestExceptionFinder.findExceptions(myFixture);
     }
 
-    private void assertCorrectExceptionsFound(Set<PsiType> types, String... criteria) {
+    private void expect(String... criteria) {
+        Set<PsiType> types = TestExceptionFinder.findExceptions(myFixture).keySet();
         List<String> typeStrings = types.stream().map(PsiType::getCanonicalText).collect(Collectors.<String>toList());
         assertAllExceptionsFound(typeStrings, criteria);
         assertNoFalsePositive(typeStrings, criteria);
