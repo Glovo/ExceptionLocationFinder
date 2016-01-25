@@ -171,8 +171,14 @@ public class ResolversTest extends CheckMateTest {
         configure();
         expect(CUSTOM_UNCHECKED);
     }
+
     public void testParamReturnTypeLocalAmbiResolved() {
         configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
+    }
+
+    public void testSuperQualifierResolved() {
+        configure();
+        expect(CUSTOM_UNCHECKED);
     }
 }

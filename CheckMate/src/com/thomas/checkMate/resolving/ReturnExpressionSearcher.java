@@ -16,9 +16,11 @@ public class ReturnExpressionSearcher {
         PsiMethod method = methodCallExpression.resolveMethod();
         if (method != null) {
             List<PsiMethod> overridingMethods = OverridingMethodResolver.resolve(methodCallExpression, method);
-            overridingMethods.add(method);
+            if (overridingMethods.size() < 1) {
+                overridingMethods.add(method);
+            }
             overridingMethods.forEach(om -> {
-                Collection<PsiReturnStatement> returnStatements = PsiTreeUtil.findChildrenOfType(method, PsiReturnStatement.class);
+                Collection<PsiReturnStatement> returnStatements = PsiTreeUtil.findChildrenOfType(om, PsiReturnStatement.class);
                 returnStatements.forEach(rs -> {
                     PsiExpression returnExpression = rs.getReturnValue();
                     if (returnExpression != null) {
