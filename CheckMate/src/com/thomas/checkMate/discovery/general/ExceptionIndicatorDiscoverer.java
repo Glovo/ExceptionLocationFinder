@@ -16,7 +16,6 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
     private static final Logger logger = Logger.getLogger(ExceptionIndicatorDiscoverer.class.getName());
     private final CheckMateSettings checkMateSettings = CheckMateSettings.getInstance();
     private ExceptionTypeResolver<T> exceptionTypeResolver;
-    //    private TryStatementTracker tryStatementTracker;
     private UncheckedValidator uncheckedValidator;
     private Class<T> elementClass;
 
@@ -42,23 +41,9 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
 
     protected abstract boolean isIndicator(T psiElement);
 
-//    private boolean isUncaught(PsiType psiType) {
-//        return tryStatementTracker.isNotCaughtByEnclosingCatchSections(psiType);
-//    }
-
     private boolean isUnChecked(PsiType psiType) {
         return uncheckedValidator.isUncheckedOrError(psiType);
     }
-
-//    private void addToMap(PsiType psiType, Discovery discovery, Map<PsiType, Set<Discovery>> discoveredExceptions) {
-//        if (discoveredExceptions.containsKey(psiType)) {
-//            discoveredExceptions.get(psiType).add(discovery);
-//        } else {
-//            Set<Discovery> discoveredThrowStatements = new HashSet<>();
-//            discoveredThrowStatements.add(discovery);
-//            discoveredExceptions.put(psiType, discoveredThrowStatements);
-//        }
-//    }
 
     private void notifyProgress(String exceptionName, PsiMethod encapsulatingMethod) {
         String exceptionFound = String.format("%s in %s", exceptionName, encapsulatingMethod.getName());
@@ -68,10 +53,6 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
         }
         logger.info(exceptionFound);
     }
-
-//    public void setTryStatementTracker(TryStatementTracker tryStatementTracker) {
-//        this.tryStatementTracker = tryStatementTracker;
-//    }
 
     public void setUncheckedValidator(UncheckedValidator uncheckedValidator) {
         this.uncheckedValidator = uncheckedValidator;
