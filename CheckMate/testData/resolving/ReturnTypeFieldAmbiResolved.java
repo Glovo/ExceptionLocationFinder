@@ -2,14 +2,13 @@ package resolving;
 
 import base.OtherThrower;
 import base.SuperInterface;
-import base.TestBase;
 import base.Thrower;
 
-public class ReturnTypeLocalAmbiResolved{
+public class ReturnTypeFieldAmbiResolved {
+    private static SuperInterface superInterface = null;
 
-    public SuperInterface getThrower(boolean random) {
-        SuperInterface superInterface = null;
-        if(random)
+    public static SuperInterface getThrower(boolean random) {
+        if (random)
             superInterface = new Thrower();
         else
             superInterface = new OtherThrower();
