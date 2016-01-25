@@ -2,7 +2,6 @@ package com.thomas.checkMate;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiType;
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.thomas.checkMate.util.CheckMateTestUtil;
 import com.thomas.checkMate.util.TestExceptionFinder;
@@ -73,5 +72,9 @@ public abstract class CheckMateTest extends LightCodeInsightFixtureTestCase {
 
     protected void configure(String... testFiles) {
         CheckMateTestUtil.configure(myFixture, getTestDir(), testFiles);
+    }
+
+    protected void configure() {
+        configure(getTestName(false) + ".java");
     }
 }

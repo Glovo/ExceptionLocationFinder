@@ -33,31 +33,33 @@ public class MethodParamResolver {
         return resolvedExpression;
     }
 
+
     private static List<PsiExpression> processMethod(PsiMethod surroundingMethod, int argumentIndex) {
         List<PsiExpression> discoveredExpressions = new ArrayList<>();
         PsiType methodType = getMethodType(surroundingMethod);
-        expressionStream(refStream(surroundingMethod)).forEach(argumentExtractor(argumentIndex, discoveredExpressions));
+        expressionsOf(referencesTo(surroundingMethod)).forEach(addArgumentsTo(discoveredExpressions, argumentIndex));
         if (methodType != null) {
-            expressionStream(superRefStream(surroundingMethod))
-                    .filter(matchingSubType(methodType))
-                    .forEach(argumentExtractor(argumentIndex, discoveredExpressions));
+            expressionsOf(superReferencesTo(surroundingMethod))
+                    .filter(qualifierIsSubOf(methodType))
+                    .forEach(addArgumentsTo(discoveredExpressions, argumentIndex));
         }
         return discoveredExpressions;
     }
 
-    private static Stream<PsiReference> refStream(PsiMethod method) {
+    private static Stream<PsiReference> referencesTo(PsiMethod method) {
         return MethodReferencesSearch.search(method).findAll().stream();
     }
 
-    private static Stream<PsiReference> superRefStream(PsiMethod method) {
+    private static Stream<PsiReference> superReferencesTo(PsiMethod method) {
         Collection<PsiReference> references = new ArrayList<>();
         Query<MethodSignatureBackedByPsiMethod> superSearch = SuperMethodsSearch.search(method, null, true, true);
         Collection<MethodSignatureBackedByPsiMethod> superMethods = superSearch.findAll();
-        superMethods.forEach(sm -> references.addAll(refStream(sm.getMethod()).collect(Collectors.toList())));
+        superMethods.forEach(sm -> references.addAll(referencesTo(sm.getMethod()).collect(Collectors.toList())));
         return references.stream();
     }
 
-    private static Stream<PsiMethodCallExpression> expressionStream(Stream<PsiReference> methodReferences) {
+
+    private static Stream<PsiMethodCallExpression> expressionsOf(Stream<PsiReference> methodReferences) {
         return methodReferences
                 .filter(mr -> mr instanceof PsiReferenceExpression)
                 .map(pre -> ((PsiReferenceExpression) pre).getParent())
@@ -65,7 +67,7 @@ public class MethodParamResolver {
                 .map(pme -> (PsiMethodCallExpression) pme);
     }
 
-    private static Consumer<PsiMethodCallExpression> argumentExtractor(int argumentIndex, List<PsiExpression> discoveredExpressions) {
+    private static Consumer<PsiMethodCallExpression> addArgumentsTo(List<PsiExpression> discoveredExpressions, int argumentIndex) {
         return (pme -> {
             PsiExpressionList argumentList = pme.getArgumentList();
             PsiExpression[] expressions = argumentList.getExpressions();
@@ -83,27 +85,10 @@ public class MethodParamResolver {
         return null;
     }
 
-    private static Predicate<PsiMethodCallExpression> matchingSubType(PsiType type) {
+    private static Predicate<PsiMethodCallExpression> qualifierIsSubOf(PsiType type) {
         return (pme -> {
-            List<PsiType> types = TypeResolver.resolve(pme);
+            List<PsiType> types = TypeResolver.resolve(pme.getMethodExpression().getQualifierExpression());
             return types.contains(type);
         });
     }
-
-
-//    Consumer<PsiReference> psiReferenceConsumer = mr -> {
-//        if (mr instanceof PsiReferenceExpression) {
-//            PsiElement parent = ((PsiReferenceExpression) mr).getParent();
-//            if (parent != null && parent instanceof PsiMethodCallExpression) {
-//                if (qualifierSubtypeMatches(methodType, (PsiMethodCallExpression) parent)) { //only do this in super methods
-//                    PsiExpressionList argumentList = ((PsiMethodCallExpression) parent).getArgumentList();
-//                    PsiExpression[] expressions = argumentList.getExpressions();
-//                    if (expressions.length > argumentIndex) {
-//                        discoveredExpressions.add(expressions[argumentIndex]);
-//                    }
-//                }
-//            }
-//        }
-//    };
-
 }

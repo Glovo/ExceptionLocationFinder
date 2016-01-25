@@ -8,14 +8,16 @@ import java.util.List;
 
 public class OverridingMethodResolver {
     public static List<PsiMethod> resolve(PsiMethodCallExpression methodCallExpression, PsiMethod methodToResolve) {
-        PsiExpression qualifierExpression = methodCallExpression.getMethodExpression().getQualifierExpression();
-        List<PsiType> psiTypes = TypeResolver.resolve(qualifierExpression);
-        List<PsiClass> psiClasses = convert(psiTypes, JavaPsiFacade.getInstance(methodCallExpression.getProject()));
         List<PsiMethod> overridingMethods = new ArrayList<>();
-        for (PsiClass psiClass : psiClasses) {
-            PsiMethod overridingMethod = psiClass.findMethodBySignature(methodToResolve, false);
-            if (overridingMethod != null) {
-                overridingMethods.add(overridingMethod);
+        PsiExpression qualifierExpression = methodCallExpression.getMethodExpression().getQualifierExpression();
+        if(qualifierExpression != null) {
+            List<PsiType> psiTypes = TypeResolver.resolve(qualifierExpression);
+            List<PsiClass> psiClasses = convert(psiTypes, JavaPsiFacade.getInstance(methodCallExpression.getProject()));
+            for (PsiClass psiClass : psiClasses) {
+                PsiMethod overridingMethod = psiClass.findMethodBySignature(methodToResolve, false);
+                if (overridingMethod != null) {
+                    overridingMethods.add(overridingMethod);
+                }
             }
         }
         return overridingMethods;

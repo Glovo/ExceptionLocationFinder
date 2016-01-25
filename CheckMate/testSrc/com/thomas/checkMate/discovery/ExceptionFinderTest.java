@@ -10,77 +10,77 @@ public class ExceptionFinderTest extends CheckMateTest {
     }
 
     public void testCustomFound() {
-        configure("CustomFound.java");
+        configure();
         expect(CUSTOM_UNCHECKED);
     }
 
     public void testRuntimeFound() {
-        configure("RuntimeFound.java");
+        configure();
         expect(RUNTIME);
     }
 
     public void testCheckedIgnored() {
-        configure("CheckedIgnored.java");
+        configure();
         expectNone();
     }
 
     public void testSuperFound() {
-        configure("SuperFound.java");
+        configure();
         expect(CUSTOM_UNCHECKED);
     }
 
     public void testInterfaceDefaultFound() {
-        configure("InterfaceDefaultFound.java");
+        configure();
         expect(CUSTOM_UNCHECKED);
     }
 
     public void testChainingFound() {
-        configure("ChainingFound.java");
+        configure();
         expect(CUSTOM_UNCHECKED, RUNTIME);
     }
 
     public void testInnerCaughtIgnored() {
-        configure("InnerCaughtIgnored.java");
+        configure();
         expectNone();
     }
 
     public void testOuterCaughtIgnored() {
-        configure("OuterCaughtIgnored.java");
+        configure();
         expectNone();
     }
 
     public void testInnerSuperCaughtIgnored() {
-        configure("InnerSuperCaughtIgnored.java");
+        configure();
         expectNone();
     }
 
     public void testOuterSuperCaughtIgnored() {
-        configure("OuterSuperCaughtIgnored.java");
+        configure();
         expectNone();
     }
 
     public void testInnerUncaughtFound() {
-        configure("InnerUncaughtFound.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testOuterUncaughtFound() {
-        configure("OuterUncaughtFound.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testInnerToOuterUncaughtFound() {
-        configure("InnerToOuterUncaughtFound.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testConstructorFound() {
-        configure("ConstructorFound.java");
+        configure();
         expect(RUNTIME);
     }
 
     public void testThrowDocFound() {
-        configure("ThrowDocFound.java");
+        configure();
         CheckMateSettings.getInstance().setIncludeJavaDocs(true);
         expect(CUSTOM_UNCHECKED);
     }
@@ -92,7 +92,7 @@ public class ExceptionFinderTest extends CheckMateTest {
     }
 
     public void testOverriddenIgnored() {
-        configure("OverriddenIgnored.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
@@ -103,12 +103,12 @@ public class ExceptionFinderTest extends CheckMateTest {
     }
 
     public void testRepeatedMethodFound() {
-        configure("RepeatedMethodFound.java");
+        configure();
         expect(CUSTOM_UNCHECKED);
     }
 
     public void testInfiniteLoopPrevented() {
-        configure("InfiniteLoopPrevented.java");
+        configure();
         expectNone();
     }
 }

@@ -16,83 +16,84 @@ public class ResolversTest extends CheckMateTest {
     }
 
     public void testLocalVarInheritorsResolved() {
-        configure("LocalVarInheritorsResolved.java");
+//        configure();
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testIndirectLocalVarResolved() {
-        configure("IndirectLocalVarResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
-    public void testAmbiLocalVarInheritorsResolved() {
-        configure("AmbiLocalVarResolved.java");
+    public void testAmbiLocalVarResolved() {
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     public void testFieldInheritorsResolved() {
-        configure("FieldInheritorsResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
-    public void testAmbiFieldInheritorsResolved() {
-        configure("AmbiFieldInheritorsResolved.java");
+    public void testAmbiFieldResolved() {
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     public void testParamResolved() {
-        configure("ParamResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testMultiParamResolved() {
-        configure("MultiParamResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testAmbiParamResolved() {
-        configure("AmbiParamResolved.java");
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     public void testParamLocalResolved() {
-        configure("ParamLocalResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testParamAmbiLocalResolved() {
-        configure("ParamAmbiLocalResolved.java");
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     public void testMultiParamLocalResolved() {
-        configure("MultiParamLocalResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testMultiParamAmbiLocalResolved() {
-        configure("MultiParamAmbiLocalResolved.java");
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
 
     public void testParamFieldResolved() {
-        configure("ParamFieldResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testParamAmbiFieldResolved() {
-        configure("ParamAmbiFieldResolved.java");
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     public void testMultiParamFieldResolved() {
-        configure("MultiParamFieldResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testMultiParamAmbiFieldResolved() {
-        configure("MultiParamAmbiFieldResolved.java");
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
@@ -102,32 +103,52 @@ public class ResolversTest extends CheckMateTest {
     }
 
     public void testParamPassResolved() {
-        configure("ParamPassResolved.java");
+        configure();
         expect(OTHER_UNCHECKED);
     }
 
     public void testParamAmbiPassResolved() {
-        configure("ParamAmbiPassResolved.java");
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     public void testParamSuperPassResolved() {
-        configure("ParamSuperPassResolved.java");
+        configure();
         expect(CUSTOM_UNCHECKED);
     }
 
     public void testParamSuperPassOtherIgnored() {
-        configure("ParamSuperPassOtherIgnored.java");
+        configure();
         expectNone();
     }
 
     public void testAmbiParamSuperPassResolved() {
-        configure("AmbiParamSuperPassResolved.java");
+        configure();
         expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 
     public void testParamInfiniteLoopPrevented() {
-        configure("ParamInfiniteLoopPrevented.java");
+        configure();
         expect(CUSTOM_UNCHECKED);
+    }
+
+    public void testReturnTypeResolved() {
+        configure();
+        expect(CUSTOM_UNCHECKED);
+    }
+
+    public void testConstructorTypeResolved() {
+        configure();
+        expect(CUSTOM_UNCHECKED);
+    }
+
+    public void testReturnTypeLocalResolved() {
+        configure();
+        expect(CUSTOM_UNCHECKED);
+    }
+
+    public void testReturnTypeLocalAmbiResolved() {
+        configure();
+        expect(CUSTOM_UNCHECKED, OTHER_UNCHECKED);
     }
 }

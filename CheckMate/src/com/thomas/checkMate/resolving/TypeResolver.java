@@ -1,8 +1,6 @@
 package com.thomas.checkMate.resolving;
 
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiVariable;
+import com.intellij.psi.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +8,27 @@ import java.util.List;
 public class TypeResolver {
     public static List<PsiType> resolve(PsiExpression expression) {
         List<PsiType> plausibleTypes = new ArrayList<>();
-        PsiVariable variable = VariableResolver.resolveVariable(expression);
-        if (variable != null) {
-            List<PsiExpression> assignmentExpressions = AssignmentSearcher.search(variable);
-            if (assignmentExpressions.size() > 0) {
-                resolveDeeperOrAdd(assignmentExpressions, plausibleTypes);
-            } else {
-                List<PsiExpression> paramExpressions = MethodParamResolver.resolve(variable);
-                resolveDeeperOrAdd(paramExpressions, plausibleTypes);
+        if (expression instanceof PsiNewExpression) {
+            plausibleTypes.add(expression.getType());
+            return plausibleTypes;
+        }
+        if (expression instanceof PsiMethodCallExpression) {
+            List<PsiExpression> returnExpressions = ReturnExpressionSearcher.search((PsiMethodCallExpression) expression);
+            resolveDeeperOrAdd(returnExpressions, plausibleTypes);
+            return plausibleTypes;
+        }
+        if (expression instanceof PsiReferenceExpression) {
+            PsiVariable variable = VariableResolver.resolveVariable(expression);
+            if (variable != null) {
+                List<PsiExpression> assignmentExpressions = AssignmentSearcher.search(variable);
+                if (assignmentExpressions.size() > 0) {
+                    resolveDeeperOrAdd(assignmentExpressions, plausibleTypes);
+                    return plausibleTypes;
+                } else {
+                    List<PsiExpression> paramExpressions = MethodParamResolver.resolve(variable);
+                    resolveDeeperOrAdd(paramExpressions, plausibleTypes);
+                    return plausibleTypes;
+                }
             }
         }
         return plausibleTypes;
