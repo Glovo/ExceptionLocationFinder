@@ -1,13 +1,18 @@
-package exception_finder;
+package resolving;
 
 import base.OtherThrower;
 import base.Thrower;
 import base.SuperInterface;
 import base.TestBase;
 
-public class MultiParamLocalResolved extends TestBase{
-    public void otherTest() {
-        SuperInterface superInterface = new OtherThrower();
+public class MultiParamAmbiFieldResolved extends TestBase{
+    private SuperInterface superInterface = null;
+
+    public void otherTest(boolean random) {
+        if(random)
+            superInterface = new OtherThrower();
+        else
+            superInterface = new Thrower();
         OtherInterface otherInterface = new Thrower();
         test(superInterface, otherInterface);
     }

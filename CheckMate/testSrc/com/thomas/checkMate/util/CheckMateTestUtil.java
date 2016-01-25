@@ -1,8 +1,8 @@
-package com.thomas.checkMate.discovery;
+package com.thomas.checkMate.util;
 
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 
-public class ExceptionFinderTestUtil {
+public class CheckMateTestUtil {
     public static final String[] COMMON_TEST_FILES = new String[]{
             "other_package/OtherCustomUncheckedException.java",
             "BridgeSuper.java",

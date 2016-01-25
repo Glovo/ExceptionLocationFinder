@@ -65,14 +65,15 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
         PsiMethod psiMethod = callExpression.resolveMethod();
         if (psiMethod != null) {
             if (checkMateSettings.getIncludeInheritors()) {
-                visitMethod(psiMethod, OverridingMethodResolver.resolve(callExpression, psiMethod));
+                if (callExpression instanceof PsiMethodCallExpression) {
+                    visitMethod(psiMethod, OverridingMethodResolver.resolve((PsiMethodCallExpression) callExpression, psiMethod));
+                }
             } else {
                 visitMethod(psiMethod, null);
             }
         }
         super.visitCallExpression(callExpression);
     }
-
 
     public void visitMethod(PsiMethod method, List<PsiMethod> overridingMethods) {
         if (methodTracker.alreadyOpened(method)) {

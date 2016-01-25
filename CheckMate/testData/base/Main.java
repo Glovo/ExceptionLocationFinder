@@ -110,4 +110,9 @@ public class Main {
             //
         }
     }
+
+    public static void testAmbi() {
+        SuperInterface superInterface = new Thrower();
+        superInterface.throwSuperInterface();
+    }
 }

@@ -1,11 +1,11 @@
-package exception_finder;
+package resolving;
 
 import base.OtherThrower;
 import base.SuperInterface;
 import base.TestBase;
 import base.Thrower;
 
-public class AmbiLocalVarInheritorsResolved extends TestBase {
+public class AmbiLocalVarResolved extends TestBase {
     public void test(boolean random) {
         SuperInterface superInterface = null;
         if (random)

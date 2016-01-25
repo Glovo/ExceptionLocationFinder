@@ -1,4 +1,4 @@
-package exception_finder;
+package resolving;
 
 import base.BridgeSuper;
 import base.OtherThrower;

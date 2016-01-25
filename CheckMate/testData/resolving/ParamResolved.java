@@ -1,14 +1,12 @@
-package exception_finder;
+package resolving;
 
 import base.OtherThrower;
 import base.SuperInterface;
 import base.TestBase;
 
-public class ParamFieldResolved extends TestBase{
-    private SuperInterface superInterface = new OtherThrower();
-
+public class ParamResolved extends TestBase{
     public void otherTest() {
-        test(superInterface);
+        test(new OtherThrower());
     }
 
     public void test(SuperInterface superInterface) {
