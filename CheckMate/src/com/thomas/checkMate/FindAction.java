@@ -13,6 +13,9 @@ import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiStatement;
 import com.intellij.psi.PsiType;
+import com.thomas.checkMate.configuration.CheckMateSettings;
+import com.thomas.checkMate.configuration.util.FirstRunUtil;
+import com.thomas.checkMate.configuration.util.VersionCheckUtil;
 import com.thomas.checkMate.discovery.ComputableExceptionFinder;
 import com.thomas.checkMate.discovery.factories.DiscovererFactory;
 import com.thomas.checkMate.discovery.general.Discovery;
@@ -31,6 +34,7 @@ import java.util.Set;
 public class FindAction extends AnAction {
     private final ProgressManager progressManager;
     private final HintManager hintManager;
+    private final CheckMateSettings settings = CheckMateSettings.getInstance();
 
     public FindAction() {
         progressManager = ProgressManager.getInstance();
@@ -45,7 +49,10 @@ public class FindAction extends AnAction {
         if (psiFile == null || editor == null) {
             return;
         }
-
+        //Reset settings if the version demands it
+        VersionCheckUtil.reset(settings);
+        //Prompt a settings dialog when this is the first run
+        FirstRunUtil.promptSettings(settings, project);
         //Extract all selected method call expressions
         Caret currentCaret = editor.getCaretModel().getCurrentCaret();
         PsiStatementExtractor statementExtractor = new PsiStatementExtractor(psiFile, currentCaret.getSelectionStart(), currentCaret.getSelectionEnd());
@@ -88,13 +95,13 @@ public class FindAction extends AnAction {
             generateTryCatch(statementExtractor, generateDialog, project, editor);
             currentCaret.removeSelection();
         }
+        //Navigate to the current file
         psiFile.navigate(true);
     }
 
     private void generateTryCatch(PsiStatementExtractor statementExtractor, GenerateDialog generateDialog, Project project, Editor editor) {
         //Extract the statements that need to be wrapped by the try catch statement
         List<PsiStatement> statements = statementExtractor.extract();
-        //Activate the file that needs to be edited
         //Get the selected exceptions
         List<PsiType> selectedExceptionTypes = generateDialog.getSelectedExceptionTypes();
         if (selectedExceptionTypes.size() < 1) {

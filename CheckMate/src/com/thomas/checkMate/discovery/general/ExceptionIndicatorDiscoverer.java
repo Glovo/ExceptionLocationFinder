@@ -9,6 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.ExceptionTypeResolver;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
+import com.thomas.checkMate.utilities.BlackListUtil;
 
 import java.util.logging.Logger;
 
@@ -28,7 +29,7 @@ public abstract class ExceptionIndicatorDiscoverer<T extends PsiElement> {
         if (getElementClass().isAssignableFrom(psiElement.getClass())) {
             if (isIndicator(psiElement)) {
                 PsiType psiType = exceptionTypeResolver.resolve(psiElement);
-                if (psiType != null && !checkMateSettings.getExcBlackList().contains(psiType.getCanonicalText()) && isUnChecked(psiType)) {
+                if (psiType != null && BlackListUtil.isAllowed(psiType, checkMateSettings.getExcBlackList()) && isUnChecked(psiType)) {
                     PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
                     Discovery discovery = new Discovery(psiType, psiElement, psiMethod);
                     notifyProgress(psiType.getCanonicalText(), psiMethod);

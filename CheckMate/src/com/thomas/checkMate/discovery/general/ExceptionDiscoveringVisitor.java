@@ -6,15 +6,18 @@ import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 import com.thomas.checkMate.resolving.OverridingMethodEstimator;
 import com.thomas.checkMate.resolving.OverridingMethodResolver;
+import com.thomas.checkMate.utilities.BlackListUtil;
 import com.thomas.checkMate.utilities.DiscoveryMapUtil;
-import com.thomas.checkMate.utilities.OverrideBlackListUtil;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     private final CheckMateSettings checkMateSettings;
     private Map<PsiType, Set<Discovery>> discoveredExceptions = new HashMap<>();
-//    private Map<PsiClass, Collection<PsiClass>> inheritorCache = new HashMap<>();
+    //    private Map<PsiClass, Collection<PsiClass>> inheritorCache = new HashMap<>();
     private MethodTracker methodTracker = new MethodTracker();
     private TryStatementTracker tryStatementTracker;
     private List<ExceptionIndicatorDiscoverer> discovererList;
@@ -63,24 +66,26 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     public void visitCallExpression(PsiCallExpression callExpression) {
         PsiMethod psiMethod = callExpression.resolveMethod();
         if (psiMethod != null) {
-            if (OverrideBlackListUtil.isAllowed(psiMethod)) {
-                if (checkMateSettings.getEstimateInheritors()) {
-                    if (callExpression instanceof PsiMethodCallExpression) {
-                        List<PsiMethod> overrides = OverridingMethodEstimator.estimate((PsiMethodCallExpression) callExpression, psiMethod);
-                        overrides.forEach(m -> visitMethod(m, null));
+            if (BlackListUtil.isAllowed(psiMethod, checkMateSettings.getClassBlackList())) {
+                if (BlackListUtil.isAllowed(psiMethod, checkMateSettings.getOverrideBlackList())) {
+                    if (checkMateSettings.getEstimateInheritors()) {
+                        if (callExpression instanceof PsiMethodCallExpression) {
+                            List<PsiMethod> overrides = OverridingMethodEstimator.estimate((PsiMethodCallExpression) callExpression, psiMethod);
+                            overrides.forEach(m -> visitMethod(m, null));
+                        }
+                    } else {
+                        visitMethod(psiMethod, OverridingMethodResolver.resolve(psiMethod));
                     }
                 } else {
-                    visitMethod(psiMethod, OverridingMethodResolver.resolve(psiMethod));
+                    visitMethod(psiMethod, null);
                 }
-            } else {
-                visitMethod(psiMethod, null);
             }
         }
         super.visitCallExpression(callExpression);
     }
 
     public void visitMethod(PsiMethod method, List<PsiMethod> overridingMethods) {
-        if(method == null) {
+        if (method == null) {
             return;
         }
         if (methodTracker.alreadyOpened(method)) {
@@ -90,17 +95,19 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
             addDiscoveries(methodTracker.getResult(method));
             return;
         }
-        methodTracker.openMethod(method);
-        PsiMethod mirror = getMirror(method);
-        if (mirror != null) {
-            visitMethod(mirror);
-        } else {
-            super.visitMethod(method);
-            if (overridingMethods != null) {
-                overridingMethods.forEach(om -> visitMethod(om, null));
+        if (BlackListUtil.isAllowed(method, checkMateSettings.getClassBlackList())) {
+            methodTracker.openMethod(method);
+            PsiMethod mirror = getMirror(method);
+            if (mirror != null) {
+                visitMethod(mirror);
+            } else {
+                super.visitMethod(method);
+                if (overridingMethods != null) {
+                    overridingMethods.forEach(om -> visitMethod(om, null));
+                }
             }
+            methodTracker.closeMethod(method);
         }
-        methodTracker.closeMethod(method);
     }
 
 //    public void visitInheritors(PsiMethod method) {

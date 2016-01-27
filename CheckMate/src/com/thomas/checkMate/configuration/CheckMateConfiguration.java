@@ -63,6 +63,8 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
         modified = modified || !checkMateSettings.getOverrideBlackList().containsAll(settingsForm.getOverrideBlackList());
         modified = modified || !settingsForm.getExcBlackList().containsAll(checkMateSettings.getExcBlackList());
         modified = modified || !checkMateSettings.getExcBlackList().containsAll(settingsForm.getExcBlackList());
+        modified = modified || !settingsForm.getClassBlackList().containsAll(checkMateSettings.getClassBlackList());
+        modified = modified || !checkMateSettings.getClassBlackList().containsAll(settingsForm.getClassBlackList());
         return modified;
     }
 
@@ -71,6 +73,7 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
         checkMateSettings.setIncludeJavaDocs(settingsForm.getIncludeJavaDocs());
         checkMateSettings.setIncludeErrors(settingsForm.getIncludeErrors());
         checkMateSettings.setEstimateInheritors(settingsForm.getEstimateInheritors());
+        checkMateSettings.setClassBlackList(settingsForm.getClassBlackList());
         checkMateSettings.setOverrideBlackList(settingsForm.getOverrideBlackList());
         checkMateSettings.setExcBlackList(settingsForm.getExcBlackList());
     }

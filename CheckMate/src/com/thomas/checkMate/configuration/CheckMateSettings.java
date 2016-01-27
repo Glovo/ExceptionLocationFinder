@@ -13,13 +13,27 @@ import java.util.List;
 public class CheckMateSettings implements ApplicationComponent, PersistentStateComponent<CheckMateSettings> {
     private static CheckMateSettings instance;
     //These fields have to be public for inclusion in Persistent State.
-    public boolean includeJavaDocs = true;
-    public boolean includeErrors = false;
-    public boolean estimateInheritors = false;
-    public List<String> overrideBlackList = new ArrayList<>();
-    public List<String> excBlackList = new ArrayList<>();
+    public String version;
+    public boolean firstRun;
+    public boolean includeJavaDocs;
+    public boolean includeErrors;
+    public boolean estimateInheritors;
+    public List<String> classBlackList;
+    public List<String> overrideBlackList;
+    public List<String> excBlackList;
 
     public CheckMateSettings() {
+        reset();
+    }
+
+    public void reset() {
+        firstRun = true;
+        includeJavaDocs = true;
+        includeErrors = false;
+        estimateInheritors = false;
+        classBlackList = new ArrayList<>();
+        excBlackList = new ArrayList<>();
+        overrideBlackList = new ArrayList<>();
         overrideBlackList.add("java");
         overrideBlackList.add("org.xml");
         overrideBlackList.add("org.omg");
@@ -78,6 +92,30 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
 
     public void setExcBlackList(List<String> excBlackList) {
         this.excBlackList = excBlackList;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public boolean getFirstRun() {
+        return firstRun;
+    }
+
+    public void setFirstRun(boolean firstRun) {
+        this.firstRun = firstRun;
+    }
+
+    public List<String> getClassBlackList() {
+        return classBlackList;
+    }
+
+    public void setClassBlackList(List<String> classBlackList) {
+        this.classBlackList = classBlackList;
     }
 
     @Override

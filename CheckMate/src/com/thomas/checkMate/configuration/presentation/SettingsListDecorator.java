@@ -16,6 +16,7 @@ public class SettingsListDecorator {
             settingsListModel.addElement(whitelistItem);
         });
         toolbarDecorator.disableUpDownActions();
+        toolbarDecorator.setVisibleRowCount(3);
         JPanel decoratedPanel = toolbarDecorator.createPanel();
         return LabeledComponent.create(decoratedPanel, label);
     }
