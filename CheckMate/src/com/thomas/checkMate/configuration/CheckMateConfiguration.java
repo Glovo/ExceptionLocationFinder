@@ -58,9 +58,9 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
     public boolean isModified() {
         boolean modified = settingsForm.getIncludeJavaDocs() != checkMateSettings.getIncludeJavaDocs();
         modified = modified || settingsForm.getIncludeErrors() != checkMateSettings.getIncludeErrors();
-        modified = modified || settingsForm.getIncludeInheritors() != checkMateSettings.getIncludeInheritors();
-        modified = modified || !settingsForm.getSrcWhiteList().containsAll(checkMateSettings.getSrcWhiteList());
-        modified = modified || !checkMateSettings.getSrcWhiteList().containsAll(settingsForm.getSrcWhiteList());
+        modified = modified || settingsForm.getEstimateInheritors() != checkMateSettings.getEstimateInheritors();
+        modified = modified || !settingsForm.getOverrideBlackList().containsAll(checkMateSettings.getOverrideBlackList());
+        modified = modified || !checkMateSettings.getOverrideBlackList().containsAll(settingsForm.getOverrideBlackList());
         modified = modified || !settingsForm.getExcBlackList().containsAll(checkMateSettings.getExcBlackList());
         modified = modified || !checkMateSettings.getExcBlackList().containsAll(settingsForm.getExcBlackList());
         return modified;
@@ -70,8 +70,8 @@ public class CheckMateConfiguration implements ApplicationComponent, SearchableC
     public void apply() throws ConfigurationException {
         checkMateSettings.setIncludeJavaDocs(settingsForm.getIncludeJavaDocs());
         checkMateSettings.setIncludeErrors(settingsForm.getIncludeErrors());
-        checkMateSettings.setIncludeInheritors(settingsForm.getIncludeInheritors());
-        checkMateSettings.setSrcWhiteList(settingsForm.getSrcWhiteList());
+        checkMateSettings.setEstimateInheritors(settingsForm.getEstimateInheritors());
+        checkMateSettings.setOverrideBlackList(settingsForm.getOverrideBlackList());
         checkMateSettings.setExcBlackList(settingsForm.getExcBlackList());
     }
 

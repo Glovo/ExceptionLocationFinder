@@ -15,7 +15,7 @@ public class ReturnExpressionSearcher {
         List<PsiExpression> returnExpressions = new ArrayList<>();
         PsiMethod method = methodCallExpression.resolveMethod();
         if (method != null) {
-            List<PsiMethod> overridingMethods = OverridingMethodResolver.resolve(methodCallExpression, method);
+            List<PsiMethod> overridingMethods = OverridingMethodEstimator.estimate(methodCallExpression, method);
             if (overridingMethods.size() < 1) {
                 overridingMethods.add(method);
             }

@@ -5,7 +5,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.thomas.checkMate.configuration.CheckMateSettings;
 
-public class WhiteListUtil {
+public class OverrideBlackListUtil {
     private static final CheckMateSettings checkMateSettings = CheckMateSettings.getInstance();
 
     public static boolean isAllowed(PsiMethod method) {
@@ -17,9 +17,7 @@ public class WhiteListUtil {
         if (psiClass != null) {
             String qName = psiClass.getQualifiedName();
             if (qName != null) {
-                if (!(qName.startsWith("java") || qName.startsWith("org.xml") || qName.startsWith("org.omg")))
-                    return true;
-                if (checkMateSettings.getSrcWhiteList().stream().anyMatch(qName::startsWith))
+                if (!checkMateSettings.getOverrideBlackList().stream().anyMatch(qName::startsWith))
                     return true;
             }
         }

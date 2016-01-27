@@ -3,7 +3,7 @@ package com.thomas.checkMate.writing;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiType;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.thomas.checkMate.util.CheckMateTestUtil;
+import com.thomas.checkMate.util.ConfigurationUtil;
 import com.thomas.checkMate.editing.PsiStatementExtractor;
 import com.thomas.checkMate.editing.TestExtractorFactory;
 import com.thomas.checkMate.util.TestExceptionFinder;
@@ -53,7 +53,7 @@ public class TryCatchStatementWriterTest extends LightCodeInsightFixtureTestCase
     }
 
     private void configure(String... testFiles) {
-        CheckMateTestUtil.configure(myFixture, TEST_FILE_DIR, testFiles);
+        ConfigurationUtil.configure(myFixture, TEST_FILE_DIR, testFiles);
     }
 
     private void checkResult(String afterFile) {

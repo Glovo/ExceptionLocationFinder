@@ -15,12 +15,15 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
     //These fields have to be public for inclusion in Persistent State.
     public boolean includeJavaDocs = true;
     public boolean includeErrors = false;
-    public boolean includeInheritors = false;
-    public List<String> srcWhiteList = new ArrayList<>();
+    public boolean estimateInheritors = false;
+    public List<String> overrideBlackList = new ArrayList<>();
     public List<String> excBlackList = new ArrayList<>();
 
     public CheckMateSettings() {
-        srcWhiteList.add("javax.persistence");
+        overrideBlackList.add("java");
+        overrideBlackList.add("org.xml");
+        overrideBlackList.add("org.omg");
+        overrideBlackList.add("sun");
         excBlackList.add("java.lang.NullPointerException");
         excBlackList.add("java.lang.IllegalArgumentException");
         excBlackList.add("java.lang.IndexOutOfBoundsException");
@@ -53,20 +56,20 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
         this.includeErrors = includeErrors;
     }
 
-    public boolean getIncludeInheritors() {
-        return includeInheritors;
+    public boolean getEstimateInheritors() {
+        return estimateInheritors;
     }
 
-    public void setIncludeInheritors(boolean includeInheritors) {
-        this.includeInheritors = includeInheritors;
+    public void setEstimateInheritors(boolean estimateInheritors) {
+        this.estimateInheritors = estimateInheritors;
     }
 
-    public List<String> getSrcWhiteList() {
-        return srcWhiteList;
+    public List<String> getOverrideBlackList() {
+        return overrideBlackList;
     }
 
-    public void setSrcWhiteList(List<String> srcWhiteList) {
-        this.srcWhiteList = srcWhiteList;
+    public void setOverrideBlackList(List<String> overrideBlackList) {
+        this.overrideBlackList = overrideBlackList;
     }
 
     public List<String> getExcBlackList() {

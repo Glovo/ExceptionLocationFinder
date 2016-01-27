@@ -87,7 +87,7 @@ public class MethodParamResolver {
 
     private static Predicate<PsiMethodCallExpression> qualifierIsSubOf(PsiType type) {
         return (pme -> {
-            List<PsiType> types = TypeResolver.resolve(pme.getMethodExpression().getQualifierExpression());
+            List<PsiType> types = TypeEstimator.estimate(pme.getMethodExpression().getQualifierExpression());
             return types.contains(type);
         });
     }

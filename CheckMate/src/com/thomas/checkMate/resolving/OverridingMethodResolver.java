@@ -1,38 +1,27 @@
 package com.thomas.checkMate.resolving;
 
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.search.searches.ClassInheritorsSearch;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Query;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class OverridingMethodResolver {
-    public static List<PsiMethod> resolve(PsiMethodCallExpression methodCallExpression, PsiMethod methodToResolve) {
+    public static List<PsiMethod> resolve(PsiMethod method) {
+        PsiClass encapsulatingClass = PsiTreeUtil.getParentOfType(method, PsiClass.class);
         List<PsiMethod> overridingMethods = new ArrayList<>();
-        PsiExpression qualifierExpression = methodCallExpression.getMethodExpression().getQualifierExpression();
-        if(qualifierExpression != null) {
-            List<PsiType> psiTypes = TypeResolver.resolve(qualifierExpression);
-            List<PsiClass> psiClasses = convert(psiTypes, JavaPsiFacade.getInstance(methodCallExpression.getProject()));
-            for (PsiClass psiClass : psiClasses) {
-                PsiMethod overridingMethod = psiClass.findMethodBySignature(methodToResolve, false);
-                if (overridingMethod != null) {
-                    overridingMethods.add(overridingMethod);
-                }
-            }
+        if (encapsulatingClass != null) {
+            Query<PsiClass> search = ClassInheritorsSearch.search(encapsulatingClass);
+            Collection<PsiClass> implementingClasses = search.findAll();
+            implementingClasses.forEach(ic -> {
+                PsiMethod methodBySignature = ic.findMethodBySignature(method, true);
+                overridingMethods.add(methodBySignature);
+            });
         }
         return overridingMethods;
-    }
-
-    private static List<PsiClass> convert(List<PsiType> types, JavaPsiFacade facade) {
-        List<PsiClass> classes = new ArrayList<>();
-        for (PsiType type : types) {
-            String text = type.getCanonicalText();
-            GlobalSearchScope scope = GlobalSearchScope.allScope(facade.getProject());
-            PsiClass psiClass = facade.findClass(text, scope);
-            if (psiClass != null) {
-                classes.add(psiClass);
-            }
-        }
-        return classes;
     }
 }

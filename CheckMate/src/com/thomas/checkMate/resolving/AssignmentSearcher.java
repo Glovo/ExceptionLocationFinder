@@ -36,8 +36,10 @@ public class AssignmentSearcher {
                 for (PsiAssignmentExpression expression : assignments) {
                     PsiExpression lExpression = expression.getLExpression();
                     PsiVariable assignmentVariable = VariableResolver.resolveVariable(lExpression);
-                    if (assignmentVariable.equals(variable)) {
-                        filteredAssignments.add(expression.getRExpression());
+                    if (assignmentVariable != null) {
+                        if (assignmentVariable.equals(variable)) {
+                            filteredAssignments.add(expression.getRExpression());
+                        }
                     }
                 }
             }

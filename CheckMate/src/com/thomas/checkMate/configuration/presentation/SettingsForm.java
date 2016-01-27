@@ -10,17 +10,17 @@ import java.util.List;
 public class SettingsForm extends JPanel {
     private static final String INCLUDE_JAVA_DOCS = "Include exceptions found in @throws JavaDoc clauses";
     private static final String INCLUDE_ERRORS = "Include errors in search results";
-    private static final String INCLUDE_INHERITORS = "Search through all overrides of encountered methods (may include false positives and increase search times)";
-    private static final String SRC_WHITELIST = "Sources whitelist (by default all classes from java*, org.xml* and org.omg* are ignored)";
-    private static final String SRC_WHITELIST_DETAIL = "Include all classes with a FQN that starts with: ";
-    private static final String SRC_WHITELIST_TITLE = "Add to whitelist";
+    private static final String ESTIMATE_INHERITORS = "Estimate plausible overrides of an encountered method (default: search through method and all overrides)";
+    private static final String OVERRIDE_BLACKLIST = "Override Blacklist (don't search for overrides of a class's methods when the FQN matches the following regexes)";
+    private static final String OVERRIDE_BLACKLIST_DETAIL = "Exclude all classes with an FQN that matches: ";
+    private static final String OVERRIDE_BLACKLIST_TITLE = "Add to override blacklist";
     private static final String EXC_BLACKLIST = "Exception blacklist (exclude the following exceptions from search results)";
     private static final String EXC_BLACKLIST_DETAIL = "FQN of exception to ignore: ";
-    private static final String EXC_BLACKLIST_TITLE = "Add to blacklist";
+    private static final String EXC_BLACKLIST_TITLE = "Add to exception blacklist";
     private JCheckBox javaDocsCBox;
     private JCheckBox errorsCBox;
-    private JCheckBox inheritorsCBox;
-    private DefaultListModel<String> srcWhiteListModel;
+    private JCheckBox estimateCBox;
+    private DefaultListModel<String> overrideBlackList;
     private DefaultListModel<String> excBlackListModel;
 
 
@@ -30,11 +30,11 @@ public class SettingsForm extends JPanel {
         this.add(javaDocsCBox);
         errorsCBox = new JCheckBox(INCLUDE_ERRORS);
         this.add(errorsCBox);
-        inheritorsCBox = new JCheckBox(INCLUDE_INHERITORS);
-        this.add(inheritorsCBox);
-        srcWhiteListModel = new DefaultListModel<>();
-        this.add(new SettingsListDecorator().decorate(new JList<>(srcWhiteListModel), srcWhiteListModel,
-                SRC_WHITELIST, SRC_WHITELIST_TITLE, SRC_WHITELIST_DETAIL));
+        estimateCBox = new JCheckBox(ESTIMATE_INHERITORS);
+        this.add(estimateCBox);
+        overrideBlackList = new DefaultListModel<>();
+        this.add(new SettingsListDecorator().decorate(new JList<>(overrideBlackList), overrideBlackList,
+                OVERRIDE_BLACKLIST, OVERRIDE_BLACKLIST_TITLE, OVERRIDE_BLACKLIST_DETAIL));
         excBlackListModel = new DefaultListModel<>();
         this.add(new SettingsListDecorator().decorate(new JList<>(excBlackListModel), excBlackListModel,
                 EXC_BLACKLIST, EXC_BLACKLIST_TITLE, EXC_BLACKLIST_DETAIL));
@@ -49,12 +49,12 @@ public class SettingsForm extends JPanel {
         return errorsCBox.isSelected();
     }
 
-    public boolean getIncludeInheritors() {
-        return inheritorsCBox.isSelected();
+    public boolean getEstimateInheritors() {
+        return estimateCBox.isSelected();
     }
 
-    public List<String> getSrcWhiteList() {
-        return modelToList(srcWhiteListModel);
+    public List<String> getOverrideBlackList() {
+        return modelToList(overrideBlackList);
     }
 
     public List<String> getExcBlackList() {
@@ -64,8 +64,8 @@ public class SettingsForm extends JPanel {
     public void reset(CheckMateSettings settings) {
         javaDocsCBox.setSelected(settings.getIncludeJavaDocs());
         errorsCBox.setSelected(settings.getIncludeErrors());
-        inheritorsCBox.setSelected(settings.getIncludeInheritors());
-        resetListModel(srcWhiteListModel, settings.getSrcWhiteList());
+        estimateCBox.setSelected(settings.getEstimateInheritors());
+        resetListModel(overrideBlackList, settings.getOverrideBlackList());
         resetListModel(excBlackListModel, settings.getExcBlackList());
     }
 

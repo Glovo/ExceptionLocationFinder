@@ -89,8 +89,7 @@ public class Thrower extends SuperThrower implements SuperInterface, IgnoredSupe
     }
 
     public void superThrow() {
-        super.superThrow();
-        //nothing
+        throw new OtherCustomUncheckedException("hehe");
     }
 
     public void generateStackOverflow() {

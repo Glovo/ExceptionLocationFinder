@@ -5,8 +5,8 @@ import com.intellij.psi.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TypeResolver {
-    public static List<PsiType> resolve(PsiExpression expression) {
+public class TypeEstimator {
+    public static List<PsiType> estimate(PsiExpression expression) {
         List<PsiType> plausibleTypes = new ArrayList<>();
         if (expression instanceof PsiNewExpression) {
             plausibleTypes.add(expression.getType());
@@ -36,7 +36,7 @@ public class TypeResolver {
 
     private static void resolveDeeperOrAdd(List<PsiExpression> expressions, List<PsiType> plausibleTypes) {
         expressions.forEach(ae -> {
-            List<PsiType> subTypes = resolve(ae);
+            List<PsiType> subTypes = estimate(ae);
             if (subTypes.size() > 0) {
                 plausibleTypes.addAll(subTypes);
             } else {

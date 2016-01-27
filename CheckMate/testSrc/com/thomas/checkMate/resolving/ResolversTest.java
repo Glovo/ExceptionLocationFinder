@@ -12,7 +12,7 @@ public class ResolversTest extends CheckMateTest {
     @Override
     protected void configure(String... testFiles) {
         super.configure(testFiles);
-        CheckMateSettings.getInstance().setIncludeInheritors(true);
+        CheckMateSettings.getInstance().setEstimateInheritors(true);
     }
 
     public void testLocalVarInheritorsResolved() {
@@ -180,5 +180,10 @@ public class ResolversTest extends CheckMateTest {
     public void testSuperQualifierResolved() {
         configure();
         expect(CUSTOM_UNCHECKED);
+    }
+
+    public void testOverriddenMethodIgnored() {
+        configure();
+        expect(OTHER_UNCHECKED);
     }
 }

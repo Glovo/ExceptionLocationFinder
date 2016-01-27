@@ -24,11 +24,6 @@ public class ExceptionFinderTest extends CheckMateTest {
         expectNone();
     }
 
-    public void testSuperFound() {
-        configure();
-        expect(CUSTOM_UNCHECKED);
-    }
-
     public void testInterfaceDefaultFound() {
         configure();
         expect(CUSTOM_UNCHECKED);
@@ -96,10 +91,9 @@ public class ExceptionFinderTest extends CheckMateTest {
         expect(OTHER_UNCHECKED);
     }
 
-    public void testOverrideIgnoredWhenSet() {
+    public void testOverrideFound() {
         configure("OverrideFound.java");
-        CheckMateSettings.getInstance().setIncludeInheritors(false);
-        expectNone();
+        expect(RUNTIME, CUSTOM_UNCHECKED);
     }
 
     public void testRepeatedMethodFound() {

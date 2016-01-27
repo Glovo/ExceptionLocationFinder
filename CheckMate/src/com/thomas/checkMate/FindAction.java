@@ -54,11 +54,11 @@ public class FindAction extends AnAction {
         try {
             psiMethodCalls = methodCallExpressionExtractor.extract();
         } catch (MultipleMethodException mme) {
-            showInformationHint(editor, "Please keep your selection within one method");
+            hintManager.showErrorHint(editor, "Please keep your selection within one method");
             return;
         }
         if (psiMethodCalls.size() < 1) {
-            showInformationHint(editor, "No expressions found in current selection");
+            hintManager.showErrorHint(editor, "No expressions found in current selection");
             return;
         }
 
@@ -71,8 +71,8 @@ public class FindAction extends AnAction {
             discoveredExceptions = progressManager
                     .runProcessWithProgressSynchronously(exceptionFinder, "Searching For Unchecked Exceptions", true, project);
         } catch (StackOverflowError | OutOfMemoryError er) {
-            showInformationHint(editor, "Too many statements too process, consider disabling the overriding method search option " +
-                    "and/or removing some java sources from the whitelist");
+            hintManager.showErrorHint(editor, "Too many statements too process, consider adding more items to the override blacklist " +
+                    "or disabling the estimate overrides option");
             return;
         }
         if (discoveredExceptions != null && discoveredExceptions.keySet().size() < 1) {
