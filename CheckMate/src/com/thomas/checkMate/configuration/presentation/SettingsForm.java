@@ -15,7 +15,7 @@ public class SettingsForm extends JPanel {
     private static final String ADD_TITLE = "Add to ";
     private static final String REGEX = "Regex: ";
     private static final String OVERRIDE_BLACKLIST = "Override Blacklist (don't search for overrides of a class's methods when the FQN matches the following regexes)";
-    private static final String EXC_BLACKLIST = "Exception Blacklist (exclude the following exceptions from search results)";
+    private static final String EXC_BLACKLIST = "Exception Blacklist (exclude exceptions with an FQN that matches the following regexes)";
     private JCheckBox javaDocsCBox;
     private JCheckBox errorsCBox;
     private JCheckBox estimateCBox;

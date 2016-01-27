@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.ExceptionTypeResolver;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
-import com.thomas.checkMate.utilities.BlackListUtil;
+import com.thomas.checkMate.configuration.util.BlackListUtil;
 
 import java.util.logging.Logger;
 

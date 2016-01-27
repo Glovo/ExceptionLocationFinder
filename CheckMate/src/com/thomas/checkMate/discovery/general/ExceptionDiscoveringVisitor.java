@@ -6,7 +6,7 @@ import com.thomas.checkMate.configuration.CheckMateSettings;
 import com.thomas.checkMate.discovery.general.type_resolving.UncheckedValidator;
 import com.thomas.checkMate.resolving.OverridingMethodEstimator;
 import com.thomas.checkMate.resolving.OverridingMethodResolver;
-import com.thomas.checkMate.utilities.BlackListUtil;
+import com.thomas.checkMate.configuration.util.BlackListUtil;
 import com.thomas.checkMate.utilities.DiscoveryMapUtil;
 
 import java.util.HashMap;
