@@ -8,11 +8,12 @@ import javax.swing.*;
 import java.util.regex.Pattern;
 
 public class SettingsListDecorator {
+    private static final String REGEX = "Regex: ";
 
-    public LabeledComponent decorate(JList<String> listToDecorate, DefaultListModel<String> settingsListModel, String label, String inputTitle, String inputDetail) {
+    public LabeledComponent decorate(JList<String> listToDecorate, DefaultListModel<String> settingsListModel, String label, String detail, String inputTitle) {
         ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(listToDecorate);
         toolbarDecorator.setAddAction(anActionButton -> {
-            String blackListItem = (String) JOptionPane.showInputDialog(listToDecorate, inputDetail, inputTitle,
+            String blackListItem = (String) JOptionPane.showInputDialog(listToDecorate, REGEX, inputTitle,
                     JOptionPane.INFORMATION_MESSAGE, AllIcons.General.Add, null, null);
             try {
                 Pattern.compile(blackListItem);
@@ -24,6 +25,7 @@ public class SettingsListDecorator {
         toolbarDecorator.disableUpDownActions();
         toolbarDecorator.setVisibleRowCount(3);
         JPanel decoratedPanel = toolbarDecorator.createPanel();
+        decoratedPanel.setBorder(BorderFactory.createTitledBorder(detail));
         return LabeledComponent.create(decoratedPanel, label);
     }
 }
