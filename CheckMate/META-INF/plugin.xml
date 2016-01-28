@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.thomas.checkMate</id>
     <name>CheckMate</name>
-    <version>1.1</version>
+    <version>1.1.1</version>
     <vendor email="checkmateplugin@hotmail.com">Thomas Goris</vendor>
 
     <description><![CDATA[
@@ -11,10 +11,7 @@ Customize the search process through the settings menu (Ctrl+Alt+S: find CheckMa
     ]]></description>
 
     <change-notes><![CDATA[
-      Added an experimental option to estimate method overrides for an encountered method.<br>
-      Added separate blacklist options for methods and method overrides.<br>
-      Blacklisting is now based on regexes.<br>
-      Changed default blacklists to regexes.<br>
+    Settings prompt now opens the correct settings menu.
     ]]>
     </change-notes>
 
