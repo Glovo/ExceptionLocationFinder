@@ -186,4 +186,9 @@ public class ResolversTest extends CheckMateTest {
         configure();
         expect(OTHER_UNCHECKED);
     }
+
+    public void testUnResolvedMethodVisited() {
+        configure();
+        expect(CUSTOM_UNCHECKED);
+    }
 }

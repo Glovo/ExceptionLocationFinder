@@ -34,12 +34,12 @@ public class CheckMateSettings implements ApplicationComponent, PersistentStateC
         classBlackList = new ArrayList<>();
         excBlackList = new ArrayList<>();
         overrideBlackList = new ArrayList<>();
-        overrideBlackList.add("java");
-        overrideBlackList.add("org.xml");
-        overrideBlackList.add("org.omg");
-        overrideBlackList.add("sun");
-        excBlackList.add("java.lang.NullPointerException");
-        excBlackList.add("java.lang.IllegalArgumentException");
+        classBlackList.add("java.lang.*");
+        classBlackList.add("java.util.*");
+        overrideBlackList.add("java.*");
+        overrideBlackList.add("org.xml.*");
+        overrideBlackList.add("org.omg.*");
+        overrideBlackList.add("sun.*");
         excBlackList.add("java.lang.IndexOutOfBoundsException");
     }
 
