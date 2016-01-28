@@ -12,7 +12,7 @@ public class FirstRunUtil {
             settings.setFirstRun(false);
             int confirmed = JOptionPane.showConfirmDialog(null, "You can customize the search process through the settings menu.\n Do you want to review the settings?", "CheckMate settings", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (confirmed == 0) {
-                ShowSettingsUtil.getInstance().showSettingsDialog(project, "CheckMateConfiguration");
+                ShowSettingsUtil.getInstance().showSettingsDialog(project, "CheckMate");
             }
         }
     }
