@@ -2,11 +2,9 @@ package com.thomas.checkMate.resolving;
 
 import com.intellij.psi.*;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
-import com.intellij.psi.search.searches.SuperMethodsSearch;
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiTypesUtil;
-import com.intellij.util.Query;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,8 +50,7 @@ public class MethodParamResolver {
 
     private static Stream<PsiReference> superReferencesTo(PsiMethod method) {
         Collection<PsiReference> references = new ArrayList<>();
-        Query<MethodSignatureBackedByPsiMethod> superSearch = SuperMethodsSearch.search(method, null, true, true);
-        Collection<MethodSignatureBackedByPsiMethod> superMethods = superSearch.findAll();
+        Collection<MethodSignatureBackedByPsiMethod> superMethods = CachedSuperSearch.search(method);
         superMethods.forEach(sm -> references.addAll(referencesTo(sm.getMethod()).collect(Collectors.toList())));
         return references.stream();
     }

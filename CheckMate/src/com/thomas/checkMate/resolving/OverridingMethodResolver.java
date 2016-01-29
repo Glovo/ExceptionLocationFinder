@@ -6,14 +6,17 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Query;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class OverridingMethodResolver {
+    private static Map<PsiMethod, List<PsiMethod>> resolveCache = new HashMap<>();
+
     public static List<PsiMethod> resolve(PsiMethod method) {
-        PsiClass encapsulatingClass = PsiTreeUtil.getParentOfType(method, PsiClass.class);
+        if (resolveCache.containsKey(method)) {
+            return resolveCache.get(method);
+        }
         List<PsiMethod> overridingMethods = new ArrayList<>();
+        PsiClass encapsulatingClass = PsiTreeUtil.getParentOfType(method, PsiClass.class);
         if (encapsulatingClass != null) {
             Query<PsiClass> search = ClassInheritorsSearch.search(encapsulatingClass);
             Collection<PsiClass> implementingClasses = search.findAll();
@@ -22,6 +25,7 @@ public class OverridingMethodResolver {
                 overridingMethods.add(methodBySignature);
             });
         }
+        resolveCache.put(method, overridingMethods);
         return overridingMethods;
     }
 }
