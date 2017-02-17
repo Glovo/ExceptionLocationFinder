@@ -1,0 +1,28 @@
+Intellij needs some help to understand a plugin project. 
+
+Import project as existing source
+----------------------------------
+1: select import project 
+2: select as existing sources
+3: select src and testSrc as sources folders
+4: select default values for the other setup menus
+
+Setup an intellij SDK
+----------------------
+1: download and install the intellij version you want to run against
+2: add the installed version as your projects SDK
+
+Fix incorrect .iml configuration
+----------------------------------
+1: change JAVA_MODULE to PLUGIN_MODULE (<module type="PLUGIN_MODULE" version="4">
+2: add plugin.xml location inside the module tag (<component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/META-INF/plugin.xml" />)
+3: don't press save, this will causes an external change loading error
+4: close the project 
+5: open the project
+6: check if your changes are still applied
+
+Setup run configuration
+------------------------
+1: add plugin run configuration
+2: if you can't select a module, goto <Fix incorrect .iml configuration>
+
