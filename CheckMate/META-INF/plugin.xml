@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.thomas.checkMate</id>
     <name>CheckMate</name>
-    <version>1.1.1</version>
+    <version>2.0</version>
     <vendor email="checkmateplugin@hotmail.com">Thomas Goris</vendor>
 
     <description><![CDATA[
@@ -11,12 +11,14 @@ Customize the search process through the settings menu (Ctrl+Alt+S: find CheckMa
     ]]></description>
 
     <change-notes><![CDATA[
-    Settings prompt now opens the correct settings menu.
+    Settings are now compatible with IJ 2016.<br>
+    Dropped support for IJ 2013 and below.<br>
+    Future releases will drop support for IJ 2014 and below.
     ]]>
     </change-notes>
 
     <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="131"/>
+    <idea-version since-build="139"/> <!--IJ 14.0 and up-->
 
     <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
          on how to target different products -->
@@ -26,25 +28,19 @@ Customize the search process through the settings menu (Ctrl+Alt+S: find CheckMa
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <applicationConfigurable instance="com.thomas.checkMate.configuration.CheckMateConfiguration"/>
     </extensions>
 
     <application-components>
-        <!-- Add your application components here -->
         <component>
             <implementation-class>com.thomas.checkMate.configuration.CheckMateSettings</implementation-class>
-        </component>
-        <component>
-            <implementation-class>com.thomas.checkMate.configuration.CheckMateConfiguration</implementation-class>
         </component>
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
     </project-components>
 
     <actions>
-        <!-- Add your actions here -->
         <action id="checkMate" class="com.thomas.checkMate.FindAction" text="Find Unchecked Exceptions"
                 description="Used to discover uncaught unchecked exceptions and add/update a try catch statement based on the selected exceptions">
             <keyboard-shortcut keymap="$default" first-keystroke="alt U"/>
