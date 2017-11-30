@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.thomas.checkMate</id>
     <name>CheckMate</name>
-    <version>2.1</version>
+    <version>2.2</version>
     <vendor email="checkmateplugin@hotmail.com">Thomas Goris</vendor>
 
     <description><![CDATA[
@@ -11,7 +11,7 @@ Customize the search process through the settings menu (Ctrl+Alt+S: find CheckMa
     ]]></description>
 
     <change-notes><![CDATA[
-    Added Shift+Alt+U shortcut for Mac OS X
+    Fixed crash when generating catch statement for incomplete try catch block
     ]]>
     </change-notes>
 

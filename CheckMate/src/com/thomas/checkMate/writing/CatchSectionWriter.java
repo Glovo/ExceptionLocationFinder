@@ -7,6 +7,9 @@ import com.intellij.psi.PsiType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class CatchSectionWriter {
     private final PsiElementFactory elementFactory;
@@ -16,11 +19,8 @@ public class CatchSectionWriter {
     }
 
     public List<PsiCatchSection> write(Collection<PsiType> psiTypes) {
-        List<PsiCatchSection> psiCatchSections = new ArrayList<>();
-        for (PsiType psiType : psiTypes) {
-            PsiCatchSection catchSection = elementFactory.createCatchSection(psiType, "e", null);
-            psiCatchSections.add(catchSection);
-        }
-        return psiCatchSections;
+        return psiTypes.stream().filter(Objects::nonNull).
+                map(psiType -> elementFactory.createCatchSection(psiType, "e", null))
+                .collect(Collectors.toList());
     }
 }

@@ -26,3 +26,7 @@ Setup run configuration
 1: add plugin run configuration
 2: if you can't select a module, goto <Fix incorrect .iml configuration>
 
+Setup test configuration
+-------------------------
+1: open project settings
+2: make sure that the project compiler output is a folder on the same level as the src folder (i.e. xxx/CheckMate/out)

@@ -3,9 +3,9 @@ package com.thomas.checkMate.writing;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiType;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.thomas.checkMate.util.ConfigurationUtil;
 import com.thomas.checkMate.editing.PsiStatementExtractor;
 import com.thomas.checkMate.editing.TestExtractorFactory;
+import com.thomas.checkMate.util.ConfigurationUtil;
 import com.thomas.checkMate.util.TestExceptionFinder;
 
 import java.io.File;
@@ -50,6 +50,18 @@ public class TryCatchStatementWriterTest extends LightCodeInsightFixtureTestCase
         configure("BeforeExistingWrittenSuper.java");
         writeStatement(findExceptionTypes());
         checkResult("AfterExistingWrittenSuper.java");
+    }
+
+    public void testUncompletedExistingRemoved() {
+        configure("BeforeUncompletedExistingRemoved.java");
+        writeStatement(findExceptionTypes());
+        checkResult("AfterUncompletedExistingRemoved.java");
+    }
+
+    public void testUncompletedExistingDisjunctionRemoved() {
+        configure("BeforeUncompletedExistingDisjunctionRemoved.java");
+        writeStatement(findExceptionTypes());
+        checkResult("AfterUncompletedExistingDisjunctionRemoved.java");
     }
 
     private void configure(String... testFiles) {
