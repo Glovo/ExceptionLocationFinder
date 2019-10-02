@@ -1,0 +1,35 @@
+<idea-plugin>
+  <id>com.glovoapp.plugins.ExceptionLocationFinder</id>
+  <name>ExceptionLocationFinder</name>
+  <version>0.0.1</version>
+  <vendor email="pawel.szymanski@glovoapp.com" url="https://glovoapp.com/">Glovo</vendor>
+
+  <description><![CDATA[
+      Recursively searches for given exception and displays where it's thrown from.
+    ]]></description>
+
+  <idea-version since-build="192.5118"/>
+
+  <depends>com.intellij.modules.lang</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationConfigurable instance="com.glovoapp.plugins.infrastructure.configuration.ExceptionLocationFinderConfiguration"/>
+  </extensions>
+
+  <application-components>
+    <component>
+      <implementation-class>com.glovoapp.plugins.infrastructure.configuration.ExceptionLocationFinderSettings</implementation-class>
+    </component>
+  </application-components>
+
+  <actions>
+    <action
+      id="com.glovoapp.plugins.ExceptionLocationFinderAction"
+      class="com.glovoapp.plugins.ExceptionLocationFinderAction"
+      text="Find Exception Locations"
+      description="Used to find all locations from which given exception has been thrown">
+      <keyboard-shortcut keymap="$default" first-keystroke="alt L"/>
+    </action>
+  </actions>
+
+</idea-plugin>
