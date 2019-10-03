@@ -1,9 +1,9 @@
 package com.thomas.checkMate.configuration.presentation;
 
+import static com.glovoapp.plugins.infrastructure.configuration.Settings.currentSettings;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 
-import com.glovoapp.plugins.infrastructure.configuration.ExceptionLocationFinderSettings;
 import com.glovoapp.plugins.infrastructure.configuration.Settings;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -37,7 +37,7 @@ public class SettingsForm extends JPanel {
     private final DefaultListModel<String> overrideWhiteListModel;
 
 
-    public SettingsForm(final ExceptionLocationFinderSettings settings) {
+    public SettingsForm() {
         setLayout(new VerticalLayout());
 
         estimateCheckBox = new JCheckBox(ESTIMATE_INHERITORS);
@@ -60,7 +60,7 @@ public class SettingsForm extends JPanel {
         addListModel(overrideWhiteListModel, OVERRIDE_WHITELIST, OVERRIDE_WHITELIST_DETAIL,
             ADD_TITLE + OVERRIDE_WHITELIST);
 
-        reset(settings);
+        reset();
     }
 
     public boolean getEstimateInheritors() {
@@ -96,8 +96,8 @@ public class SettingsForm extends JPanel {
         ));
     }
 
-    public void reset(final ExceptionLocationFinderSettings exceptionLocationFinderSettings) {
-        final Settings settings = exceptionLocationFinderSettings.getSettings();
+    public void reset() {
+        final Settings settings = currentSettings();
         estimateCheckBox.setSelected(settings.estimateInheritors());
         exactSearchCheckBox.setSelected(settings.isExactSearch());
         resetListModel(classBlackListModel, settings.getClassBlackList());

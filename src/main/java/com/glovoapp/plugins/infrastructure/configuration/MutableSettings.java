@@ -7,12 +7,19 @@ import java.util.List;
  */
 final class MutableSettings {
 
+    @SuppressWarnings("WeakerAccess")
     public boolean firstRun;
+    @SuppressWarnings("WeakerAccess")
     public boolean estimateInheritors;
+    @SuppressWarnings("WeakerAccess")
     public boolean exactSearch;
+    @SuppressWarnings("WeakerAccess")
     public List<String> classBlackList;
+    @SuppressWarnings("WeakerAccess")
     public List<String> overrideBlackList;
+    @SuppressWarnings("WeakerAccess")
     public List<String> classWhiteList;
+    @SuppressWarnings("WeakerAccess")
     public List<String> overrideWhiteList;
 
     final Settings makeImmutable() {
@@ -25,62 +32,6 @@ final class MutableSettings {
             classWhiteList,
             overrideWhiteList
         );
-    }
-
-    public final boolean isFirstRun() {
-        return firstRun;
-    }
-
-    public final void setFirstRun(final boolean firstRun) {
-        this.firstRun = firstRun;
-    }
-
-    public final boolean isEstimateInheritors() {
-        return estimateInheritors;
-    }
-
-    public final void setEstimateInheritors(final boolean estimateInheritors) {
-        this.estimateInheritors = estimateInheritors;
-    }
-
-    public final boolean isExactSearch() {
-        return exactSearch;
-    }
-
-    public final void setExactSearch(final boolean exactSearch) {
-        this.exactSearch = exactSearch;
-    }
-
-    public final List<String> getClassBlackList() {
-        return classBlackList;
-    }
-
-    public final void setClassBlackList(final List<String> classBlackList) {
-        this.classBlackList = classBlackList;
-    }
-
-    public final List<String> getOverrideBlackList() {
-        return overrideBlackList;
-    }
-
-    public final void setOverrideBlackList(final List<String> overrideBlackList) {
-        this.overrideBlackList = overrideBlackList;
-    }
-
-    public final List<String> getClassWhiteList() {
-        return classWhiteList;
-    }
-
-    public final void setClassWhiteList(final List<String> classWhiteList) {
-        this.classWhiteList = classWhiteList;
-    }
-
-    public final List<String> getOverrideWhiteList() {
-        return overrideWhiteList;
-    }
-
-    public final void setOverrideWhiteList(final List<String> overrideWhiteList) {
-        this.overrideWhiteList = overrideWhiteList;
     }
 
 }

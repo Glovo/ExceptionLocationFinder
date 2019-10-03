@@ -9,6 +9,8 @@ import java.util.List;
 
 public final class Settings {
 
+    public static final String NAME = "ExceptionLocationFinderSettings";
+
     private final boolean firstRun;
     private final boolean estimateInheritors;
     private final boolean exactSearch;
@@ -75,6 +77,16 @@ public final class Settings {
             classWhiteList,
             overrideWhiteList
         );
+    }
+
+    public static Settings currentSettings() {
+        return ExceptionLocationFinderSettings.getInstance()
+                                              .getSettings();
+    }
+
+    public static void set(final Settings settings) {
+        ExceptionLocationFinderSettings.getInstance()
+                                       .setSettings(settings);
     }
 
     public final boolean isFirstRun() {

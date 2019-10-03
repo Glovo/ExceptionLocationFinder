@@ -1,5 +1,7 @@
 package com.glovoapp.plugins.infrastructure.configuration;
 
+import static com.glovoapp.plugins.infrastructure.configuration.Settings.currentSettings;
+
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.thomas.checkMate.configuration.presentation.SettingsForm;
 import java.util.Collection;
@@ -11,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExceptionLocationFinderConfiguration implements SearchableConfigurable {
 
     private final ExceptionLocationFinderSettings exceptionLocationFinderSettings = ExceptionLocationFinderSettings.getInstance();
-    private final SettingsForm settingsForm = new SettingsForm(exceptionLocationFinderSettings);
+    private final SettingsForm settingsForm = new SettingsForm();
 
     @NotNull
     @Override
@@ -45,7 +47,7 @@ public class ExceptionLocationFinderConfiguration implements SearchableConfigura
 
     @Override
     public boolean isModified() {
-        final Settings settings = exceptionLocationFinderSettings.getSettings();
+        final Settings settings = currentSettings();
         return settingsForm.getEstimateInheritors() != settings.estimateInheritors()
             || settingsForm.getExactSearch() != settings.isExactSearch()
             || collectionsDiffer(settingsForm.getOverrideBlackList(),
@@ -64,9 +66,8 @@ public class ExceptionLocationFinderConfiguration implements SearchableConfigura
 
     @Override
     public void apply() {
-        exceptionLocationFinderSettings.set(new Settings(
-            exceptionLocationFinderSettings.getSettings()
-                                           .isFirstRun(),
+        Settings.set(new Settings(
+            currentSettings().isFirstRun(),
             settingsForm.getEstimateInheritors(),
             settingsForm.getExactSearch(),
             settingsForm.getClassBlackList(),
@@ -78,7 +79,7 @@ public class ExceptionLocationFinderConfiguration implements SearchableConfigura
 
     @Override
     public void reset() {
-        settingsForm.reset(exceptionLocationFinderSettings);
+        settingsForm.reset();
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.glovoapp.plugins;
 
+import static com.glovoapp.plugins.infrastructure.configuration.Settings.currentSettings;
 import static com.thomas.checkMate.discovery.factories.DiscovererFactory.createSelectedDiscovers;
 import static java.util.stream.Collectors.toList;
 
-import com.glovoapp.plugins.infrastructure.configuration.ExceptionLocationFinderSettings;
 import com.glovoapp.plugins.ui.ExceptionSelector;
 import com.glovoapp.plugins.ui.UsageTargetFromDiscovery;
 import com.google.common.collect.Maps;
@@ -52,7 +52,6 @@ public final class ExceptionLocationFinderAction extends AnAction {
 
     private final ProgressManager progressManager = ProgressManager.getInstance();
     private final HintManager hintManager = HintManager.getInstance();
-    private final ExceptionLocationFinderSettings settings = ExceptionLocationFinderSettings.getInstance();
 
     @Override
     public final void actionPerformed(final @NotNull AnActionEvent actionEvent) {
@@ -64,7 +63,7 @@ public final class ExceptionLocationFinderAction extends AnAction {
             return;
         }
         //Prompt a settings dialog when this is the first run
-        FirstRunUtil.promptSettings(settings, project);
+        FirstRunUtil.promptSettings(project);
         PsiType exceptionTypeToFind = ExceptionSelector.selectType(project);
         //Extract all selected method call expressions
         Caret currentCaret = editor.getCaretModel()
@@ -105,8 +104,7 @@ public final class ExceptionLocationFinderAction extends AnAction {
             );
             discoveredExceptions = Maps.filterKeys(
                 unfilteredExceptions,
-                settings.getSettings()
-                        .isExactSearch()
+                currentSettings().isExactSearch()
                     ? exceptionTypeToFind::equals
                     : exceptionTypeToFind::isAssignableFrom
             );

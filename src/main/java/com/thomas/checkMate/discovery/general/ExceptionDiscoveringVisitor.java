@@ -1,9 +1,9 @@
 package com.thomas.checkMate.discovery.general;
 
+import static com.glovoapp.plugins.infrastructure.configuration.Settings.currentSettings;
 import static com.thomas.checkMate.configuration.util.ListFilterUtil.isAllowedInBlackList;
 import static com.thomas.checkMate.configuration.util.ListFilterUtil.isAllowedInWhiteList;
 
-import com.glovoapp.plugins.infrastructure.configuration.ExceptionLocationFinderSettings;
 import com.glovoapp.plugins.infrastructure.configuration.Settings;
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiCallExpression;
@@ -24,7 +24,6 @@ import java.util.Set;
 
 public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
 
-    private final ExceptionLocationFinderSettings exceptionLocationFinderSettings;
     private Map<PsiType, Set<Discovery>> discoveredExceptions = new HashMap<>();
     private MethodTracker methodTracker = new MethodTracker();
     private TryStatementTracker tryStatementTracker;
@@ -32,7 +31,6 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
 
     public ExceptionDiscoveringVisitor(PsiElement elementToVisit,
                                        List<ExceptionIndicatorDiscoverer> discovererList) {
-        this.exceptionLocationFinderSettings = ExceptionLocationFinderSettings.getInstance();
         this.tryStatementTracker = new TryStatementTracker(elementToVisit);
         this.discovererList = discovererList;
     }
@@ -70,7 +68,7 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
     @Override
     public void visitCallExpression(PsiCallExpression callExpression) {
         final PsiMethod psiMethod = callExpression.resolveMethod();
-        final Settings settings = exceptionLocationFinderSettings.getSettings();
+        final Settings settings = currentSettings();
         if (psiMethod != null) {
             if (isAllowedInBlackList(psiMethod, settings.getClassBlackList())
                 && isAllowedInWhiteList(psiMethod, settings.getClassWhiteList())) {
@@ -105,7 +103,7 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
             return;
         }
 
-        final Settings settings = exceptionLocationFinderSettings.getSettings();
+        final Settings settings = currentSettings();
         if (isAllowedInBlackList(method, settings.getClassBlackList())
             && isAllowedInWhiteList(method, settings.getClassWhiteList())) {
             methodTracker.openMethod(method);

@@ -2,7 +2,6 @@ package com.glovoapp.plugins.infrastructure.configuration;
 
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -14,10 +13,9 @@ import org.jetbrains.annotations.NotNull;
     name = ExceptionLocationFinderSettings.NAME,
     storages = {@Storage(value = "ExceptionLocationFinderSettings.xml")}
 )
-public class ExceptionLocationFinderSettings implements
-    PersistentStateComponent<MutableSettings> {
+final class ExceptionLocationFinderSettings implements PersistentStateComponent<MutableSettings> {
 
-    public static final String NAME = "ExceptionLocationFinderSettings";
+    public static final String NAME = Settings.NAME;
 
     private static AtomicReference<ExceptionLocationFinderSettings> INSTANCE = new AtomicReference<>();
 
@@ -47,11 +45,12 @@ public class ExceptionLocationFinderSettings implements
         this.settings = settings.makeImmutable();
     }
 
-    public final void set(final @NotNull Settings state) {
+    final void setSettings(final @NotNull Settings state) {
         this.settings = state;
     }
 
-    public final Settings getSettings() {
+    final Settings getSettings() {
         return settings;
     }
+
 }
