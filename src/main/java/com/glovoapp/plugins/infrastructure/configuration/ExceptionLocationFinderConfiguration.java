@@ -1,6 +1,5 @@
 package com.glovoapp.plugins.infrastructure.configuration;
 
-import com.glovoapp.plugins.infrastructure.configuration.ExceptionLocationFinderSettings.State;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.thomas.checkMate.configuration.presentation.SettingsForm;
 import java.util.Collection;
@@ -11,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class ExceptionLocationFinderConfiguration implements SearchableConfigurable {
 
-    private final ExceptionLocationFinderSettings settings = ExceptionLocationFinderSettings.getInstance();
-    private final SettingsForm settingsForm = new SettingsForm(settings);
+    private final ExceptionLocationFinderSettings exceptionLocationFinderSettings = ExceptionLocationFinderSettings.getInstance();
+    private final SettingsForm settingsForm = new SettingsForm(exceptionLocationFinderSettings);
 
     @NotNull
     @Override
@@ -46,8 +45,9 @@ public class ExceptionLocationFinderConfiguration implements SearchableConfigura
 
     @Override
     public boolean isModified() {
+        final Settings settings = exceptionLocationFinderSettings.getSettings();
         return settingsForm.getEstimateInheritors() != settings.estimateInheritors()
-            || settingsForm.getExactSearch() != settings.exactSearch()
+            || settingsForm.getExactSearch() != settings.isExactSearch()
             || collectionsDiffer(settingsForm.getOverrideBlackList(),
             settings.getOverrideBlackList())
             || collectionsDiffer(settingsForm.getClassBlackList(),
@@ -64,8 +64,9 @@ public class ExceptionLocationFinderConfiguration implements SearchableConfigura
 
     @Override
     public void apply() {
-        settings.setState(new State(
-            settings.isFirstRun(),
+        exceptionLocationFinderSettings.set(new Settings(
+            exceptionLocationFinderSettings.getSettings()
+                                           .isFirstRun(),
             settingsForm.getEstimateInheritors(),
             settingsForm.getExactSearch(),
             settingsForm.getClassBlackList(),
@@ -77,7 +78,7 @@ public class ExceptionLocationFinderConfiguration implements SearchableConfigura
 
     @Override
     public void reset() {
-        settingsForm.reset(settings);
+        settingsForm.reset(exceptionLocationFinderSettings);
     }
 
     @Override

@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 
 import com.glovoapp.plugins.infrastructure.configuration.ExceptionLocationFinderSettings;
+import com.glovoapp.plugins.infrastructure.configuration.Settings;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -65,6 +66,7 @@ public class SettingsForm extends JPanel {
     public boolean getEstimateInheritors() {
         return estimateCheckBox.isSelected();
     }
+
     public boolean getExactSearch() {
         return exactSearchCheckBox.isSelected();
     }
@@ -94,9 +96,10 @@ public class SettingsForm extends JPanel {
         ));
     }
 
-    public void reset(final ExceptionLocationFinderSettings settings) {
+    public void reset(final ExceptionLocationFinderSettings exceptionLocationFinderSettings) {
+        final Settings settings = exceptionLocationFinderSettings.getSettings();
         estimateCheckBox.setSelected(settings.estimateInheritors());
-        exactSearchCheckBox.setSelected(settings.exactSearch());
+        exactSearchCheckBox.setSelected(settings.isExactSearch());
         resetListModel(classBlackListModel, settings.getClassBlackList());
         resetListModel(overrideBlackListModel, settings.getOverrideBlackList());
         resetListModel(classWhiteListModel, settings.getClassWhiteList());

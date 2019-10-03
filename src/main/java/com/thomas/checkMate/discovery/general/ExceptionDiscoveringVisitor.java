@@ -4,6 +4,7 @@ import static com.thomas.checkMate.configuration.util.ListFilterUtil.isAllowedIn
 import static com.thomas.checkMate.configuration.util.ListFilterUtil.isAllowedInWhiteList;
 
 import com.glovoapp.plugins.infrastructure.configuration.ExceptionLocationFinderSettings;
+import com.glovoapp.plugins.infrastructure.configuration.Settings;
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiCallExpression;
 import com.intellij.psi.PsiElement;
@@ -18,11 +19,12 @@ import com.thomas.checkMate.utilities.DiscoveryMapUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
 
-    private final ExceptionLocationFinderSettings settings;
+    private final ExceptionLocationFinderSettings exceptionLocationFinderSettings;
     private Map<PsiType, Set<Discovery>> discoveredExceptions = new HashMap<>();
     private MethodTracker methodTracker = new MethodTracker();
     private TryStatementTracker tryStatementTracker;
@@ -30,7 +32,7 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
 
     public ExceptionDiscoveringVisitor(PsiElement elementToVisit,
                                        List<ExceptionIndicatorDiscoverer> discovererList) {
-        this.settings = ExceptionLocationFinderSettings.getInstance();
+        this.exceptionLocationFinderSettings = ExceptionLocationFinderSettings.getInstance();
         this.tryStatementTracker = new TryStatementTracker(elementToVisit);
         this.discovererList = discovererList;
     }
@@ -67,7 +69,8 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
 
     @Override
     public void visitCallExpression(PsiCallExpression callExpression) {
-        PsiMethod psiMethod = callExpression.resolveMethod();
+        final PsiMethod psiMethod = callExpression.resolveMethod();
+        final Settings settings = exceptionLocationFinderSettings.getSettings();
         if (psiMethod != null) {
             if (isAllowedInBlackList(psiMethod, settings.getClassBlackList())
                 && isAllowedInWhiteList(psiMethod, settings.getClassWhiteList())) {
@@ -102,8 +105,9 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
             return;
         }
 
+        final Settings settings = exceptionLocationFinderSettings.getSettings();
         if (isAllowedInBlackList(method, settings.getClassBlackList())
-        && isAllowedInWhiteList(method, settings.getClassWhiteList())) {
+            && isAllowedInWhiteList(method, settings.getClassWhiteList())) {
             methodTracker.openMethod(method);
             PsiMethod mirror = getMirror(method);
             if (mirror != null) {
@@ -120,15 +124,9 @@ public class ExceptionDiscoveringVisitor extends JavaRecursiveElementVisitor {
 
     private PsiMethod getMirror(PsiMethod method) {
         if (method instanceof ClsMethodImpl) {
-            PsiMethod sourceMirror = ((ClsMethodImpl) method).getSourceMirrorMethod();
-            if (sourceMirror != null) {
-                return sourceMirror;
-            } else {
-                PsiMethod mirror = (PsiMethod) ((ClsMethodImpl) method).getMirror();
-                if (mirror != null) {
-                    return mirror;
-                }
-            }
+            return Optional.of(((ClsMethodImpl) method))
+                           .map(ClsMethodImpl::getSourceMirrorMethod)
+                           .orElseGet(() -> (PsiMethod) ((ClsMethodImpl) method).getMirror());
         }
         return null;
     }

@@ -105,7 +105,8 @@ public final class ExceptionLocationFinderAction extends AnAction {
             );
             discoveredExceptions = Maps.filterKeys(
                 unfilteredExceptions,
-                settings.exactSearch()
+                settings.getSettings()
+                        .isExactSearch()
                     ? exceptionTypeToFind::equals
                     : exceptionTypeToFind::isAssignableFrom
             );
