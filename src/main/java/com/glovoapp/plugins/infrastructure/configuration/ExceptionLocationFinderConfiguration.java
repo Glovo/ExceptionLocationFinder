@@ -3,16 +3,14 @@ package com.glovoapp.plugins.infrastructure.configuration;
 import static com.glovoapp.plugins.infrastructure.configuration.Settings.currentSettings;
 
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.thomas.checkMate.configuration.presentation.SettingsForm;
 import java.util.Collection;
 import javax.swing.JComponent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ExceptionLocationFinderConfiguration implements SearchableConfigurable {
+final class ExceptionLocationFinderConfiguration implements SearchableConfigurable {
 
-    private final ExceptionLocationFinderSettings exceptionLocationFinderSettings = ExceptionLocationFinderSettings.getInstance();
     private final SettingsForm settingsForm = new SettingsForm();
 
     @NotNull
@@ -39,7 +37,6 @@ public class ExceptionLocationFinderConfiguration implements SearchableConfigura
         return null;
     }
 
-    @Nullable
     @Override
     public JComponent createComponent() {
         return settingsForm;

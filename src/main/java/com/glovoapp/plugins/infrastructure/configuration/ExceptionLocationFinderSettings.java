@@ -15,14 +15,14 @@ import org.jetbrains.annotations.NotNull;
 )
 final class ExceptionLocationFinderSettings implements PersistentStateComponent<MutableSettings> {
 
-    public static final String NAME = Settings.NAME;
+    static final String NAME = Settings.NAME;
 
     private static AtomicReference<ExceptionLocationFinderSettings> INSTANCE = new AtomicReference<>();
 
-    private Settings settings;
+    private final AtomicReference<Settings> settings = new AtomicReference<>(Settings.clean());
 
     public ExceptionLocationFinderSettings() {
-        this.settings = Settings.clean();
+        settings.set(Settings.clean());
     }
 
     public static ExceptionLocationFinderSettings getInstance() {
@@ -37,20 +37,21 @@ final class ExceptionLocationFinderSettings implements PersistentStateComponent<
     @NotNull
     @Override
     public MutableSettings getState() {
-        return settings.makeMutable();
+        return settings.get()
+                       .makeMutable();
     }
 
     @Override
     public void loadState(final @NotNull MutableSettings settings) {
-        this.settings = settings.makeImmutable();
+        this.settings.set(settings.makeImmutable());
     }
 
-    final void setSettings(final @NotNull Settings state) {
-        this.settings = state;
+    final void setSettings(final @NotNull Settings settings) {
+        this.settings.set(settings);
     }
 
     final Settings getSettings() {
-        return settings;
+        return settings.get();
     }
 
 }

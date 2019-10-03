@@ -1,10 +1,9 @@
-package com.thomas.checkMate.configuration.presentation;
+package com.glovoapp.plugins.infrastructure.configuration;
 
 import static com.glovoapp.plugins.infrastructure.configuration.Settings.currentSettings;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 
-import com.glovoapp.plugins.infrastructure.configuration.Settings;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -12,7 +11,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class SettingsForm extends JPanel {
+class SettingsForm extends JPanel {
 
     private static final String ESTIMATE_INHERITORS = "Estimate plausible overrides of an encountered method (default: search through method and all overrides)";
     private static final String EXACT_SEARCH = "Search for exactly the exception class specified (ignore derived exceptions)";
@@ -37,7 +36,7 @@ public class SettingsForm extends JPanel {
     private final DefaultListModel<String> overrideWhiteListModel;
 
 
-    public SettingsForm() {
+    SettingsForm() {
         setLayout(new VerticalLayout());
 
         estimateCheckBox = new JCheckBox(ESTIMATE_INHERITORS);
@@ -63,27 +62,27 @@ public class SettingsForm extends JPanel {
         reset();
     }
 
-    public boolean getEstimateInheritors() {
+    boolean getEstimateInheritors() {
         return estimateCheckBox.isSelected();
     }
 
-    public boolean getExactSearch() {
+    boolean getExactSearch() {
         return exactSearchCheckBox.isSelected();
     }
 
-    public List<String> getClassBlackList() {
+    List<String> getClassBlackList() {
         return modelToList(classBlackListModel);
     }
 
-    public List<String> getOverrideBlackList() {
+    List<String> getOverrideBlackList() {
         return modelToList(overrideBlackListModel);
     }
 
-    public List<String> getClassWhiteList() {
+    List<String> getClassWhiteList() {
         return modelToList(classWhiteListModel);
     }
 
-    public List<String> getOverrideWhiteList() {
+    List<String> getOverrideWhiteList() {
         return modelToList(overrideWhiteListModel);
     }
 
@@ -96,7 +95,7 @@ public class SettingsForm extends JPanel {
         ));
     }
 
-    public void reset() {
+    void reset() {
         final Settings settings = currentSettings();
         estimateCheckBox.setSelected(settings.estimateInheritors());
         exactSearchCheckBox.setSelected(settings.isExactSearch());
@@ -116,4 +115,5 @@ public class SettingsForm extends JPanel {
         return range(0, listModel.size()).mapToObj(listModel::getElementAt)
                                          .collect(toList());
     }
+
 }
